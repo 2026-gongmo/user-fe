@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Apple SD Gothic Neo',
+    'Noto Sans KR', sans-serif;
+  background: #F9FAFB;
+  color: #111827;
+}
+
+#root {
+  height: 100%;
+}
+
+/* 한국어 가독성을 위한 word-break */
+body, p, span, h1, h2, h3, h4, h5, h6 {
+  word-break: keep-all;
+}

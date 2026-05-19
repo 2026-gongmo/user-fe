@@ -20,11 +20,43 @@
 | 영역 | 기술 |
 |---|---|
 | Frontend | React 18, TypeScript, Vite 6 |
+| Routing | React Router HashRouter |
 | UI | MUI 7 + Tailwind 4 + lucide-react |
 | State | React local state |
-| Data Layer | 컴포넌트 내부 Mock 데이터 |
-| Styling | MUI sx + Tailwind 유틸 |
+| Data Layer | `src/data/mockData.ts` + `src/services/api.ts` mock 반환 |
+| Styling | MUI sx + Tailwind 유틸 + `src/styles/globals.css` |
 | Backend 예정 | Spring Boot, JPA, PostgreSQL 또는 MySQL |
+
+## 디렉토리 구조
+
+```text
+user-fe/
+├── docs/                         # 운영 문서 (api-plan, backend-todo, backend-design, demo-script, qa-checklist)
+├── src/
+│   ├── main.tsx                  # 진입점, HashRouter
+│   ├── App.tsx                   # 라우트 정의, ThemeProvider
+│   ├── types.ts                  # 공통 도메인 타입
+│   ├── components/               # 공유 UI 컴포넌트
+│   │   ├── Layout.tsx            # 하단 네비 + 전역 SOS FAB
+│   │   ├── SosDialog.tsx
+│   │   ├── AccessibilityDialog.tsx
+│   │   └── ImageWithFallback.tsx
+│   ├── pages/                    # 라우트별 화면
+│   │   ├── HomePage.tsx
+│   │   ├── MapPage.tsx
+│   │   ├── MatchingPage.tsx
+│   │   └── ProfilePage.tsx
+│   ├── data/
+│   │   └── mockData.ts           # Mock 데이터 단일 출처
+│   ├── services/
+│   │   └── api.ts                # Mock 반환 + API 전환 계약
+│   └── styles/
+│       └── globals.css           # Tailwind + 기본 CSS
+├── index.html
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+```
 
 ## 주요 화면
 
