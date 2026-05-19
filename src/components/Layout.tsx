@@ -21,7 +21,7 @@ export default function Layout({ children, onSosClick }: LayoutProps) {
   const activeTab = tabs.find((t) => location.pathname.startsWith(t.value))?.value ?? '/home';
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-gray-50 overflow-hidden">
+    <div className="h-[100dvh] flex flex-col bg-[#F8FAFC] overflow-hidden">
       <main className="flex-1 overflow-y-auto overscroll-contain relative">
         {children}
 
@@ -69,8 +69,10 @@ export default function Layout({ children, onSosClick }: LayoutProps) {
           flexShrink: 0,
           zIndex: (t) => t.zIndex.appBar,
           paddingBottom: 'env(safe-area-inset-bottom)',
+          borderTop: '1px solid #E5E7EB',
+          boxShadow: '0 -2px 10px rgba(15,23,42,0.05)',
         }}
-        elevation={3}
+        elevation={0}
       >
         <BottomNavigation
           value={activeTab}

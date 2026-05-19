@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   Card,
   CardContent,
-  CardActionArea,
   Avatar,
   Chip,
   Box,
@@ -21,6 +20,7 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  Alert,
 } from '@mui/material';
 import {
   Edit,
@@ -85,39 +85,49 @@ export default function ProfilePage() {
   );
 
   return (
-    <Box component="main" lang="ko" sx={{ pb: 4 }}>
-      {/* 상단 그라데이션 헤더 */}
-      <Box
-        sx={{
-          background: 'linear-gradient(135deg, #4338CA 0%, #6D28D9 100%)',
-          color: '#fff',
-          px: 2,
-          pt: 3,
-          pb: 5,
-          borderBottomLeftRadius: '24px',
-          borderBottomRightRadius: '24px',
-        }}
-      >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-          <Typography component="h1" sx={{ color: '#fff', fontSize: '1.25rem', fontWeight: 800 }}>
+    <Box component="main" lang="ko" sx={{ p: 2, pb: 4 }}>
+      <Box sx={{ pt: 2, mb: 2, display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
             내 프로필
           </Typography>
-          <IconButton
-            sx={{ color: '#fff', minWidth: 44, minHeight: 44 }}
-            aria-label="설정"
-          >
-            <Settings size={22} aria-hidden="true" />
-          </IconButton>
+          <Typography variant="body2" color="text.secondary">
+            매칭과 활동에 쓰이는 정보를 관리하세요
+          </Typography>
         </Box>
+        <IconButton
+          sx={{ color: '#6B7280', minWidth: 44, minHeight: 44 }}
+          aria-label="설정"
+        >
+          <Settings size={22} aria-hidden="true" />
+        </IconButton>
       </Box>
 
-      <Box sx={{ px: 2, mt: -4 }}>
+      <Alert
+        icon={<ShieldCheck size={20} />}
+        severity="info"
+        sx={{
+          borderRadius: '12px',
+          bgcolor: '#EEF2FF',
+          color: '#172554',
+          mb: 2,
+          '& .MuiAlert-icon': { color: '#1E3A8A' },
+        }}
+      >
+        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          프로필 공개 범위가 보호됩니다
+        </Typography>
+        <Typography variant="caption">
+          매칭 상대에게는 필요한 정보만 요약해서 보여줍니다
+        </Typography>
+      </Alert>
+
         {/* 프로필 카드 */}
-        <Card sx={{ borderRadius: '16px', boxShadow: '0 6px 16px rgba(0,0,0,0.08)' }}>
+        <Card sx={{ borderRadius: '12px', boxShadow: 'none' }}>
           <CardContent sx={{ p: 2.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
               <Avatar
-                sx={{ width: 64, height: 64, bgcolor: '#5B67F5', fontSize: '1.75rem' }}
+                sx={{ width: 64, height: 64, bgcolor: '#1E3A8A', fontSize: '1.75rem' }}
                 aria-label={`${userProfile.name} 프로필 사진`}
               >
                 {userProfile.name.charAt(0)}
@@ -174,12 +184,12 @@ export default function ProfilePage() {
                 label="학교 협약(MOU)"
                 size="small"
                 sx={{
-                  bgcolor: '#EEF0FF',
-                  color: '#4338CA',
+                  bgcolor: '#EEF2FF',
+                  color: '#1E3A8A',
                   fontWeight: 700,
                   fontSize: '0.75rem',
                   height: 26,
-                  '& .MuiChip-icon': { color: '#4338CA', ml: 0.5 },
+                  '& .MuiChip-icon': { color: '#1E3A8A', ml: 0.5 },
                 }}
               />
               <Chip
@@ -188,12 +198,12 @@ export default function ProfilePage() {
                 label={`매너 4.9 / 5.0`}
                 size="small"
                 sx={{
-                  bgcolor: '#FCE7F3',
-                  color: '#BE185D',
+                  bgcolor: '#ECFDF5',
+                  color: '#15803D',
                   fontWeight: 700,
                   fontSize: '0.75rem',
                   height: 26,
-                  '& .MuiChip-icon': { color: '#BE185D', ml: 0.5 },
+                  '& .MuiChip-icon': { color: '#15803D', ml: 0.5 },
                 }}
               />
             </Box>
@@ -225,10 +235,8 @@ export default function ProfilePage() {
           component="section"
           aria-labelledby="volunteer-heading"
           sx={{
-            borderRadius: '16px',
+            borderRadius: '12px',
             mt: 2,
-            background: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)',
-            border: '1px solid #A7F3D0',
             boxShadow: 'none',
           }}
         >
@@ -239,7 +247,7 @@ export default function ProfilePage() {
                 <Typography
                   id="volunteer-heading"
                   component="h2"
-                  sx={{ fontWeight: 700, fontSize: '1rem', color: '#064E3B' }}
+                  sx={{ fontWeight: 700, fontSize: '1rem', color: '#111827' }}
                 >
                   봉사시간 · 활동확인서
                 </Typography>
@@ -265,19 +273,19 @@ export default function ProfilePage() {
                 mb: 1.5,
               }}
             >
-              <Box sx={{ textAlign: 'center', bgcolor: 'rgba(255,255,255,0.6)', borderRadius: '10px', py: 1.25 }}>
+              <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '10px', py: 1.25 }}>
                 <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#047857' }}>
                   {volunteerStats.totalHours}h
                 </Typography>
                 <Typography sx={{ fontSize: '0.7rem', color: '#065F46' }}>누적 시간</Typography>
               </Box>
-              <Box sx={{ textAlign: 'center', bgcolor: 'rgba(255,255,255,0.6)', borderRadius: '10px', py: 1.25 }}>
+              <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '10px', py: 1.25 }}>
                 <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#047857' }}>
                   {volunteerStats.activities}
                 </Typography>
                 <Typography sx={{ fontSize: '0.7rem', color: '#065F46' }}>참여 활동</Typography>
               </Box>
-              <Box sx={{ textAlign: 'center', bgcolor: 'rgba(255,255,255,0.6)', borderRadius: '10px', py: 1.25 }}>
+              <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '10px', py: 1.25 }}>
                 <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#047857' }}>
                   {volunteerStats.certificates}
                 </Typography>
@@ -349,12 +357,12 @@ export default function ProfilePage() {
         <Card
           component="section"
           aria-labelledby="access-heading"
-          sx={{ borderRadius: '16px', mt: 2 }}
+          sx={{ borderRadius: '12px', mt: 2 }}
         >
           <CardContent sx={{ p: 2.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                <Accessibility size={20} color="#4338CA" aria-hidden="true" />
+                <Accessibility size={20} color="#1E3A8A" aria-hidden="true" />
                 <Typography
                   id="access-heading"
                   component="h2"
@@ -385,13 +393,13 @@ export default function ProfilePage() {
                     label={n.label}
                     size="small"
                     sx={{
-                      bgcolor: n.selected ? '#EEF0FF' : '#F3F4F6',
-                      color: n.selected ? '#4338CA' : '#9CA3AF',
+                      bgcolor: n.selected ? '#EEF2FF' : '#F3F4F6',
+                      color: n.selected ? '#1E3A8A' : '#9CA3AF',
                       fontWeight: n.selected ? 700 : 500,
                       fontSize: '0.8125rem',
                       height: 30,
-                      border: n.selected ? '1px solid #C7D2FE' : '1px solid transparent',
-                      '& .MuiChip-icon': { color: n.selected ? '#4338CA' : '#9CA3AF', ml: 0.5 },
+                      border: n.selected ? '1px solid #E0E7FF' : '1px solid transparent',
+                      '& .MuiChip-icon': { color: n.selected ? '#1E3A8A' : '#9CA3AF', ml: 0.5 },
                     }}
                   />
                 );
@@ -409,13 +417,13 @@ export default function ProfilePage() {
                   label={s.label}
                   size="small"
                   sx={{
-                    bgcolor: s.selected ? '#FCE7F3' : '#F3F4F6',
-                    color: s.selected ? '#BE185D' : '#9CA3AF',
+                    bgcolor: s.selected ? '#ECFDF5' : '#F3F4F6',
+                    color: s.selected ? '#15803D' : '#9CA3AF',
                     fontWeight: s.selected ? 700 : 500,
                     fontSize: '0.8125rem',
                     height: 30,
-                    border: s.selected ? '1px solid #FBCFE8' : '1px solid transparent',
-                    '& .MuiChip-icon': { color: s.selected ? '#BE185D' : '#9CA3AF', ml: 0.5 },
+                    border: s.selected ? '1px solid #BBF7D0' : '1px solid transparent',
+                    '& .MuiChip-icon': { color: s.selected ? '#15803D' : '#9CA3AF', ml: 0.5 },
                   }}
                 />
               ))}
@@ -432,7 +440,7 @@ export default function ProfilePage() {
                 alignItems: 'flex-start',
               }}
             >
-              <Sparkles size={16} color="#4338CA" aria-hidden="true" />
+              <Sparkles size={16} color="#1E3A8A" aria-hidden="true" />
               <Typography sx={{ fontSize: '0.75rem', color: '#4B5563', lineHeight: 1.5 }}>
                 입력한 프로파일은 매칭 추천에 활용됩니다. 매칭 상대에게는 일부 정보만 비공개·요약 형태로 노출됩니다.
               </Typography>
@@ -441,7 +449,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* 친구 카드 */}
-        <Card component="section" aria-labelledby="friends-heading" sx={{ borderRadius: '16px', mt: 2 }}>
+        <Card component="section" aria-labelledby="friends-heading" sx={{ borderRadius: '12px', mt: 2 }}>
           <CardContent sx={{ p: 0 }}>
             <Box
               sx={{
@@ -454,7 +462,7 @@ export default function ProfilePage() {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                <UserPlus size={20} color="#BE185D" aria-hidden="true" />
+                <UserPlus size={20} color="#15803D" aria-hidden="true" />
                 <Typography
                   id="friends-heading"
                   component="h2"
@@ -492,8 +500,8 @@ export default function ProfilePage() {
                     sx={{
                       width: 48,
                       height: 48,
-                      bgcolor: f.role === '이용자' ? '#EEF0FF' : '#FCE7F3',
-                      color: f.role === '이용자' ? '#4338CA' : '#BE185D',
+                      bgcolor: f.role === '이용자' ? '#EEF2FF' : '#ECFDF5',
+                      color: f.role === '이용자' ? '#1E3A8A' : '#15803D',
                       fontWeight: 700,
                     }}
                   >
@@ -512,10 +520,10 @@ export default function ProfilePage() {
         </Card>
 
         {/* 설정 메뉴 카드 */}
-        <Card sx={{ borderRadius: '16px', mt: 2 }}>
+        <Card sx={{ borderRadius: '12px', mt: 2 }}>
           <CardContent sx={{ p: 0 }}>
             <MenuRow
-              icon={<Accessibility size={20} color="#4338CA" aria-hidden="true" />}
+              icon={<Accessibility size={20} color="#1E3A8A" aria-hidden="true" />}
               label="접근성 설정"
               sub="고대비·자막·수어·글자크기"
               onClick={() => setA11yOpen(true)}
@@ -534,7 +542,7 @@ export default function ProfilePage() {
             />
             <Divider />
             <MenuRow
-              icon={<MessageCircle size={20} color="#BE185D" aria-hidden="true" />}
+              icon={<MessageCircle size={20} color="#15803D" aria-hidden="true" />}
               label="문의/신고"
               sub="베프 운영팀에 문의"
             />
@@ -548,7 +556,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* 빠른 알림 토글 */}
-        <Card sx={{ borderRadius: '16px', mt: 2 }}>
+        <Card sx={{ borderRadius: '12px', mt: 2 }}>
           <CardContent sx={{ px: 2.5, py: 1 }}>
             <ToggleRow label="새로운 활동 알림" defaultChecked />
             <Divider />
@@ -577,7 +585,6 @@ export default function ProfilePage() {
         >
           로그아웃
         </Button>
-      </Box>
 
       {/* 접근성 설정 다이얼로그 */}
       <AccessibilityDialog open={a11yOpen} onClose={() => setA11yOpen(false)} />
@@ -633,7 +640,7 @@ export default function ProfilePage() {
           <Button
             variant="contained"
             onClick={() => setProfileEditOpen(false)}
-            sx={{ bgcolor: '#4338CA', textTransform: 'none', boxShadow: 'none' }}
+            sx={{ bgcolor: '#1E3A8A', textTransform: 'none', boxShadow: 'none' }}
           >
             저장
           </Button>
@@ -676,14 +683,14 @@ export default function ProfilePage() {
                       width: 40,
                       height: 40,
                       borderRadius: '10px',
-                      bgcolor: '#EEF0FF',
+                      bgcolor: '#EEF2FF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0,
                     }}
                   >
-                    <FileText size={20} color="#4338CA" />
+                    <FileText size={20} color="#1E3A8A" />
                   </Box>
                   <Box sx={{ flex: 1 }}>
                     <Typography sx={{ fontSize: '0.9375rem', fontWeight: 700 }}>
@@ -697,7 +704,7 @@ export default function ProfilePage() {
                     </Typography>
                   </Box>
                   <IconButton aria-label={`${c.title} 다운로드`}>
-                    <Download size={18} color="#4338CA" aria-hidden="true" />
+                    <Download size={18} color="#1E3A8A" aria-hidden="true" />
                   </IconButton>
                 </Box>
               </CardContent>
@@ -736,8 +743,8 @@ export default function ProfilePage() {
                 sx={{
                   width: 44,
                   height: 44,
-                  bgcolor: f.role === '이용자' ? '#EEF0FF' : '#FCE7F3',
-                  color: f.role === '이용자' ? '#4338CA' : '#BE185D',
+                  bgcolor: f.role === '이용자' ? '#EEF2FF' : '#ECFDF5',
+                  color: f.role === '이용자' ? '#1E3A8A' : '#15803D',
                   fontWeight: 700,
                 }}
               >
@@ -754,7 +761,7 @@ export default function ProfilePage() {
                 startIcon={<MessageCircle size={14} aria-hidden="true" />}
                 sx={{
                   textTransform: 'none',
-                  color: '#4338CA',
+                  color: '#1E3A8A',
                   borderRadius: '8px',
                   minHeight: 36,
                 }}
@@ -794,7 +801,7 @@ function MenuRow({
         minHeight: 64,
         justifyContent: 'flex-start',
         '&:focus-visible': {
-          outline: '3px solid #4338CA',
+          outline: '3px solid #1E3A8A',
           outlineOffset: -3,
         },
       }}

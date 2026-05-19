@@ -160,13 +160,6 @@ export const sosTargets: SosTarget[] = [
   { id: '119',      label: '119 응급신고', sub: '응급 상황 시', phone: '119' },
 ];
 
-export const sosQuickMessages = [
-  '지금 도움이 필요해요',
-  '이동이 어려워요',
-  '몸이 안 좋아요',
-  '길을 잃었어요',
-];
-
 // ============================================================
 // 홈 화면 콘텐츠
 // ============================================================
@@ -177,7 +170,7 @@ export const heroBanners: HeroBanner[] = [
     title: '장애·비장애 함께,\n캠퍼스 산책 동행',
     subtitle: '서로 다른 우리가 만나 친구가 되는 시간',
     image: 'https://images.unsplash.com/photo-1570793005299-c091be91bbad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    accent: '#4338CA',
+    accent: '#1E3A8A',
     overlay: 'linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 100%)',
   },
   {

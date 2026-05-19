@@ -35,19 +35,19 @@ import { facilities as locations, recentFacilitySearches as recentSearches } fro
 import type { Facility as Location, FacilityCategory } from '../types';
 
 const categories = [
-  { id: 'all',      label: '전체',       icon: Building2,    color: '#4338CA' },
-  { id: 'building', label: '건물',       icon: Building2,    color: '#4338CA' },
+  { id: 'all',      label: '전체',       icon: Building2,    color: '#1E3A8A' },
+  { id: 'building', label: '건물',       icon: Building2,    color: '#1E3A8A' },
   { id: 'elevator', label: '엘리베이터', icon: MoveVertical, color: '#B45309' },
   { id: 'ramp',     label: '경사로',     icon: Accessibility, color: '#047857' },
-  { id: 'restroom', label: '화장실',     icon: DoorOpen,     color: '#BE185D' },
+  { id: 'restroom', label: '화장실',     icon: DoorOpen,     color: '#15803D' },
 ] as const;
 
 const categoryColor = (cat: FacilityCategory) => {
   switch (cat) {
     case 'elevator': return '#B45309';
     case 'ramp':     return '#047857';
-    case 'restroom': return '#BE185D';
-    default:         return '#4338CA';
+    case 'restroom': return '#15803D';
+    default:         return '#1E3A8A';
   }
 };
 
@@ -55,8 +55,8 @@ const categoryBg = (cat: FacilityCategory) => {
   switch (cat) {
     case 'elevator': return '#FEF3C7';
     case 'ramp':     return '#D1FAE5';
-    case 'restroom': return '#FCE7F3';
-    default:         return '#EEF0FF';
+    case 'restroom': return '#ECFDF5';
+    default:         return '#EEF2FF';
   }
 };
 
@@ -292,7 +292,7 @@ export default function MapPage() {
               width: 18,
               height: 18,
               borderRadius: '50%',
-              bgcolor: '#4338CA',
+              bgcolor: '#1E3A8A',
               animation: 'mapPulse 1.8s ease-out infinite',
             }}
           />
@@ -302,9 +302,9 @@ export default function MapPage() {
               width: 18,
               height: 18,
               borderRadius: '50%',
-              bgcolor: '#4338CA',
+              bgcolor: '#1E3A8A',
               border: '3px solid #fff',
-              boxShadow: '0 0 0 4px rgba(67,56,202,0.25)',
+              boxShadow: '0 0 0 4px rgba(30,58,138,0.25)',
             }}
           />
         </Box>
@@ -339,7 +339,7 @@ export default function MapPage() {
             minHeight: 48,
             boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
             '&:focus-visible': {
-              outline: '3px solid #4338CA',
+              outline: '3px solid #1E3A8A',
               outlineOffset: 2,
             },
           }}
@@ -389,7 +389,7 @@ export default function MapPage() {
                   fontSize: '0.8125rem',
                   transition: 'all 0.15s ease',
                   '&:focus-visible': {
-                    outline: '3px solid #4338CA',
+                    outline: '3px solid #1E3A8A',
                     outlineOffset: 2,
                   },
                 }}
@@ -421,12 +421,12 @@ export default function MapPage() {
             boxShadow: '0 3px 10px rgba(0,0,0,0.15)',
             '&:hover': { bgcolor: '#F3F4F6' },
             '&:focus-visible': {
-              outline: '3px solid #4338CA',
+              outline: '3px solid #1E3A8A',
               outlineOffset: 2,
             },
           }}
         >
-          <Locate size={22} color="#4338CA" aria-hidden="true" />
+          <Locate size={22} color="#1E3A8A" aria-hidden="true" />
         </IconButton>
       </Box>
 
@@ -440,8 +440,8 @@ export default function MapPage() {
           right: 0,
           bottom: 0,
           height: sheetHeightStyle,
-          borderTopLeftRadius: '20px',
-          borderTopRightRadius: '20px',
+          borderTopLeftRadius: '12px',
+          borderTopRightRadius: '12px',
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
           overflow: 'hidden',
@@ -478,7 +478,7 @@ export default function MapPage() {
             pb: 1,
             '&:active': { cursor: 'grabbing' },
             '&:focus-visible': {
-              outline: '3px solid #4338CA',
+              outline: '3px solid #1E3A8A',
               outlineOffset: -3,
             },
           }}
@@ -536,8 +536,8 @@ export default function MapPage() {
                   component="span"
                   aria-label={`${visibleLocations.length}개`}
                   sx={{
-                    bgcolor: '#EEF0FF',
-                    color: '#4338CA',
+                    bgcolor: '#EEF2FF',
+                    color: '#1E3A8A',
                     fontSize: '0.75rem',
                     fontWeight: 800,
                     px: 0.875,
@@ -671,7 +671,7 @@ export default function MapPage() {
                   aria-label={`${selected.name}까지 길찾기`}
                   sx={{
                     flex: 1,
-                    bgcolor: '#4338CA',
+                    bgcolor: '#1E3A8A',
                     color: '#fff',
                     minHeight: 48,
                     textTransform: 'none',
@@ -679,7 +679,7 @@ export default function MapPage() {
                     fontWeight: 700,
                     borderRadius: '12px',
                     boxShadow: 'none',
-                    '&:hover': { bgcolor: '#3730A3' },
+                    '&:hover': { bgcolor: '#172554' },
                   }}
                 >
                   길찾기
@@ -923,7 +923,7 @@ export default function MapPage() {
                       minHeight: 64,
                       '&:hover': { bgcolor: '#F9FAFB' },
                       '&:focus-visible': {
-                        outline: '3px solid #4338CA',
+                        outline: '3px solid #1E3A8A',
                         outlineOffset: 2,
                       },
                     }}

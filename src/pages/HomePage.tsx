@@ -19,12 +19,7 @@ import {
   Bell,
   Search,
   Calendar,
-  Utensils,
-  Bus,
-  BookOpen,
-  Megaphone,
   HandHeart,
-  Trophy,
   MessageSquare,
   ThumbsUp,
   Eye,
@@ -39,8 +34,6 @@ import {
   Sparkles,
   GraduationCap,
   Gem,
-  ShieldAlert,
-  PhoneCall,
 } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import {
@@ -51,17 +44,6 @@ import {
   externalActivities,
   UNREAD_NOTIFICATIONS,
 } from '../data/mockData';
-
-const quickMenus = [
-  { icon: Calendar, label: '시간표', color: '#5B67F5', bg: '#EEF0FF' },
-  { icon: Utensils, label: '학식', color: '#B45309', bg: '#FEF3C7' },
-  { icon: Bus, label: '셔틀', color: '#047857', bg: '#D1FAE5' },
-  { icon: BookOpen, label: '도서관', color: '#6D28D9', bg: '#EDE9FE' },
-  { icon: HandHeart, label: '동행매칭', color: '#BE185D', bg: '#FCE7F3' },
-  { icon: Megaphone, label: '공지', color: '#B91C1C', bg: '#FEE2E2' },
-  { icon: Trophy, label: '대외활동', color: '#0E7490', bg: '#CFFAFE' },
-  { icon: Accessibility, label: '배리어프리', color: '#0369A1', bg: '#E0F2FE' },
-];
 
 const activities = [
   {
@@ -105,11 +87,7 @@ const activities = [
   },
 ];
 
-type HomePageProps = {
-  onSosClick?: () => void;
-};
-
-export default function HomePage({ onSosClick }: HomePageProps) {
+export default function HomePage() {
   const heroScrollRef = useRef<HTMLDivElement | null>(null);
   const [heroIndex, setHeroIndex] = useState(0);
 
@@ -167,13 +145,13 @@ export default function HomePage({ onSosClick }: HomePageProps) {
       <Box
         component="header"
         sx={{
-          background: 'linear-gradient(135deg, #4338CA 0%, #6D28D9 100%)',
+          background: 'linear-gradient(135deg, #1E3A8A 0%, #2542A3 100%)',
           color: '#fff',
           px: 2,
           pt: 3,
           pb: 4,
-          borderBottomLeftRadius: '24px',
-          borderBottomRightRadius: '24px',
+          borderBottomLeftRadius: '12px',
+          borderBottomRightRadius: '12px',
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -373,7 +351,7 @@ export default function HomePage({ onSosClick }: HomePageProps) {
                   justifyContent: 'center',
                   borderRadius: '50%',
                   '&:focus-visible': {
-                    outline: '3px solid #4338CA',
+                    outline: '3px solid #1E3A8A',
                     outlineOffset: 2,
                   },
                 }}
@@ -383,7 +361,7 @@ export default function HomePage({ onSosClick }: HomePageProps) {
                     width: i === heroIndex ? 22 : 8,
                     height: 8,
                     borderRadius: '999px',
-                    bgcolor: i === heroIndex ? '#4338CA' : '#D1D5DB',
+                    bgcolor: i === heroIndex ? '#1E3A8A' : '#D1D5DB',
                     transition: 'width 0.25s, background-color 0.25s',
                   }}
                   aria-hidden="true"
@@ -410,7 +388,7 @@ export default function HomePage({ onSosClick }: HomePageProps) {
               sx={{ fontWeight: 800, fontSize: '1.25rem', color: '#111827' }}
             >
               인기 관심 분야{' '}
-              <Box component="span" sx={{ color: '#4338CA', fontWeight: 800 }}>
+              <Box component="span" sx={{ color: '#1E3A8A', fontWeight: 800 }}>
                 TOP 5
               </Box>
             </Typography>
@@ -460,7 +438,7 @@ export default function HomePage({ onSosClick }: HomePageProps) {
                   scrollSnapAlign: 'start',
                   borderRadius: '12px',
                   '&:focus-visible': {
-                    outline: '3px solid #4338CA',
+                    outline: '3px solid #1E3A8A',
                     outlineOffset: 2,
                   },
                 }}
@@ -499,138 +477,6 @@ export default function HomePage({ onSosClick }: HomePageProps) {
             ))}
           </Box>
         </Box>
-
-        {/* 빠른 메뉴 - 컴팩트 */}
-        <Card
-          component="section"
-          aria-labelledby="quick-menu-heading"
-          sx={{ borderRadius: '14px', mb: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.06)' }}
-        >
-          <Typography
-            id="quick-menu-heading"
-            component="h2"
-            sx={{
-              position: 'absolute',
-              width: 1,
-              height: 1,
-              overflow: 'hidden',
-              clip: 'rect(0 0 0 0)',
-            }}
-          >
-            빠른 메뉴
-          </Typography>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              rowGap: 0.5,
-              p: 1,
-            }}
-          >
-            {quickMenus.map((m) => {
-              const Icon = m.icon;
-              return (
-                <ButtonBase
-                  key={m.label}
-                  aria-label={`${m.label} 열기`}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: 0.5,
-                    py: 1.25,
-                    minHeight: 76,
-                    borderRadius: '10px',
-                    '&:focus-visible': {
-                      outline: '3px solid #4338CA',
-                      outlineOffset: 2,
-                    },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: '50%',
-                      bgcolor: m.bg,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Icon size={20} color={m.color} aria-hidden="true" />
-                  </Box>
-                  <Typography sx={{ fontSize: '0.75rem', color: '#111827' }}>
-                    {m.label}
-                  </Typography>
-                </ButtonBase>
-              );
-            })}
-          </Box>
-        </Card>
-
-        {/* SOS 안전 안내 */}
-        <Card
-          component="section"
-          aria-labelledby="sos-section-heading"
-          sx={{
-            borderRadius: '14px',
-            mb: 2,
-            background: 'linear-gradient(135deg, #B91C1C 0%, #DC2626 100%)',
-            color: '#fff',
-            boxShadow: '0 6px 14px rgba(185,28,28,0.25)',
-          }}
-        >
-          <CardActionArea
-            onClick={onSosClick}
-            aria-label="긴급 도움 호출 화면 열기"
-            sx={{ p: 2 }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Box
-                aria-hidden="true"
-                sx={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: '50%',
-                  bgcolor: 'rgba(255,255,255,0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <ShieldAlert size={26} color="#fff" />
-              </Box>
-              <Box sx={{ flex: 1 }}>
-                <Typography
-                  id="sos-section-heading"
-                  component="h2"
-                  sx={{ fontSize: '1rem', fontWeight: 800, mb: 0.25, color: '#fff' }}
-                >
-                  도움이 필요할 때, 1탭 SOS
-                </Typography>
-                <Typography sx={{ fontSize: '0.8125rem', color: '#FECACA' }}>
-                  보호자·지원센터·보안실·119에 위치와 함께 즉시 호출
-                </Typography>
-              </Box>
-              <Box
-                aria-hidden="true"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 40,
-                  height: 40,
-                  borderRadius: '50%',
-                  bgcolor: '#fff',
-                }}
-              >
-                <PhoneCall size={18} color="#B91C1C" />
-              </Box>
-            </Box>
-          </CardActionArea>
-        </Card>
 
         {/* 마감 임박 활동 */}
         <Box component="section" aria-labelledby="activities-heading" sx={{ mb: 2 }}>
@@ -685,7 +531,7 @@ export default function HomePage({ onSosClick }: HomePageProps) {
                   role="listitem"
                   sx={{
                     minWidth: 240,
-                    borderRadius: '14px',
+                    borderRadius: '12px',
                     scrollSnapAlign: 'start',
                     flexShrink: 0,
                   }}
@@ -806,7 +652,7 @@ export default function HomePage({ onSosClick }: HomePageProps) {
         <Card
           component="section"
           aria-labelledby="hot-posts-heading"
-          sx={{ borderRadius: '14px', mb: 2 }}
+          sx={{ borderRadius: '12px', mb: 2 }}
         >
           <CardContent sx={{ p: 0 }}>
             <Box
@@ -849,7 +695,7 @@ export default function HomePage({ onSosClick }: HomePageProps) {
                     <Box sx={{ width: '100%' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                         <Typography
-                          sx={{ color: '#4338CA', fontWeight: 600, fontSize: '0.8125rem' }}
+                          sx={{ color: '#1E3A8A', fontWeight: 600, fontSize: '0.8125rem' }}
                         >
                           {p.board}
                         </Typography>
@@ -914,7 +760,7 @@ export default function HomePage({ onSosClick }: HomePageProps) {
         <Card
           component="section"
           aria-labelledby="campus-news-heading"
-          sx={{ borderRadius: '14px', mb: 2 }}
+          sx={{ borderRadius: '12px', mb: 2 }}
         >
           <CardContent sx={{ p: 0 }}>
             <Box
@@ -928,7 +774,7 @@ export default function HomePage({ onSosClick }: HomePageProps) {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                <Newspaper size={18} color="#4338CA" aria-hidden="true" />
+                <Newspaper size={18} color="#1E3A8A" aria-hidden="true" />
                 <Typography
                   id="campus-news-heading"
                   component="h2"
@@ -960,8 +806,8 @@ export default function HomePage({ onSosClick }: HomePageProps) {
                           label={n.tag}
                           size="small"
                           sx={{
-                            bgcolor: '#EEF0FF',
-                            color: '#4338CA',
+                            bgcolor: '#EEF2FF',
+                            color: '#1E3A8A',
                             fontSize: '0.75rem',
                             height: 22,
                             fontWeight: 600,
@@ -1008,7 +854,7 @@ export default function HomePage({ onSosClick }: HomePageProps) {
         <Card
           component="section"
           aria-labelledby="external-heading"
-          sx={{ borderRadius: '14px' }}
+          sx={{ borderRadius: '12px' }}
         >
           <CardContent sx={{ p: 0 }}>
             <Box

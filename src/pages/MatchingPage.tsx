@@ -51,11 +51,11 @@ function CompanionCard({
   onApply: (item: Companion) => void;
 }) {
   const statusColor =
-    item.status === '확정' ? '#34D399' : item.status === '매칭대기' ? '#F59E0B' : '#5B67F5';
-  const roleColor = item.role === '이용자' ? '#5B67F5' : '#EC4899';
+    item.status === '확정' ? '#16A34A' : item.status === '매칭대기' ? '#F59E0B' : '#1E3A8A';
+  const roleColor = item.role === '이용자' ? '#1E3A8A' : '#16A34A';
 
   return (
-    <Card sx={{ borderRadius: '14px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+    <Card sx={{ borderRadius: '12px', boxShadow: 'none' }}>
       <CardContent sx={{ p: 2.5 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -117,12 +117,12 @@ function CompanionCard({
                 label="학교 공동 인증 활동"
                 size="small"
                 sx={{
-                  bgcolor: '#EEF0FF',
-                  color: '#4338CA',
+                  bgcolor: '#EEF2FF',
+                  color: '#1E3A8A',
                   fontWeight: 700,
                   fontSize: '0.7rem',
                   height: 22,
-                  '& .MuiChip-icon': { color: '#4338CA', ml: 0.5 },
+                  '& .MuiChip-icon': { color: '#1E3A8A', ml: 0.5 },
                 }}
               />
             )}
@@ -272,9 +272,9 @@ export default function MatchingPage() {
         sx={{
           borderRadius: '12px',
           bgcolor: '#EEF2FF',
-          color: '#3730A3',
+          color: '#172554',
           mb: 2,
-          '& .MuiAlert-icon': { color: '#5B67F5' },
+          '& .MuiAlert-icon': { color: '#1E3A8A' },
         }}
         action={
           <IconButton size="small" aria-label="안전 가이드 보기">
@@ -300,12 +300,12 @@ export default function MatchingPage() {
             setNewOpen(true);
           }}
           sx={{
-            bgcolor: '#5B67F5',
+            bgcolor: '#1E3A8A',
             borderRadius: '12px',
             textTransform: 'none',
             boxShadow: 'none',
             py: 1.25,
-            '&:hover': { bgcolor: '#4A56E4' },
+            '&:hover': { bgcolor: '#2542A3' },
           }}
         >
           동행 요청
@@ -319,12 +319,12 @@ export default function MatchingPage() {
             setNewOpen(true);
           }}
           sx={{
-            bgcolor: '#EC4899',
+            bgcolor: '#16A34A',
             borderRadius: '12px',
             textTransform: 'none',
             boxShadow: 'none',
             py: 1.25,
-            '&:hover': { bgcolor: '#DB2777' },
+            '&:hover': { bgcolor: '#15803D' },
           }}
         >
           동행 제공
@@ -348,7 +348,7 @@ export default function MatchingPage() {
       {selectedTab === 0 && (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-            <Sparkles size={16} color="#5B67F5" />
+            <Sparkles size={16} color="#1E3A8A" />
             <Typography variant="body2" color="text.secondary">
               현재 모집중인 동행 요청 {requests.length}건
             </Typography>
@@ -362,7 +362,7 @@ export default function MatchingPage() {
       {selectedTab === 1 && (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-            <UserCheck size={16} color="#EC4899" />
+            <UserCheck size={16} color="#16A34A" />
             <Typography variant="body2" color="text.secondary">
               동행을 제공해주실 분 {offers.length}명
             </Typography>
@@ -381,10 +381,10 @@ export default function MatchingPage() {
             </Card>
           ) : (
             myMatches.map((m) => (
-              <Card key={m.id} sx={{ borderRadius: '14px' }}>
+              <Card key={m.id} sx={{ borderRadius: '12px' }}>
                 <CardContent sx={{ p: 2.5 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
-                    <Avatar sx={{ bgcolor: '#EC489915', color: '#EC4899' }}>
+                    <Avatar sx={{ bgcolor: '#16A34A15', color: '#16A34A' }}>
                       {m.author.charAt(0)}
                     </Avatar>
                     <Box sx={{ flex: 1 }}>
@@ -399,8 +399,8 @@ export default function MatchingPage() {
                       label={m.status}
                       size="small"
                       sx={{
-                        bgcolor: m.status === '확정' ? '#34D39915' : '#F59E0B15',
-                        color: m.status === '확정' ? '#0F7C5C' : '#B45309',
+                        bgcolor: m.status === '확정' ? '#16A34A15' : '#F59E0B15',
+                        color: m.status === '확정' ? '#15803D' : '#B45309',
                       }}
                     />
                   </Box>
@@ -524,7 +524,7 @@ export default function MatchingPage() {
             variant="contained"
             onClick={() => setNewOpen(false)}
             sx={{
-              bgcolor: formRole === '이용자' ? '#5B67F5' : '#EC4899',
+              bgcolor: formRole === '이용자' ? '#1E3A8A' : '#16A34A',
               textTransform: 'none',
               boxShadow: 'none',
             }}
@@ -554,7 +554,7 @@ export default function MatchingPage() {
           <Button
             variant="contained"
             onClick={() => setApplyTarget(null)}
-            sx={{ bgcolor: '#5B67F5', textTransform: 'none', boxShadow: 'none' }}
+            sx={{ bgcolor: '#1E3A8A', textTransform: 'none', boxShadow: 'none' }}
           >
             신청하기
           </Button>

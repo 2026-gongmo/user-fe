@@ -136,7 +136,7 @@ export default function AccessibilityDialog({
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-            <Type size={20} color="#4338CA" aria-hidden="true" />
+            <Type size={20} color="#1E3A8A" aria-hidden="true" />
             <Typography
               id="a11y-font"
               component="h2"
@@ -155,7 +155,7 @@ export default function AccessibilityDialog({
             aria-label="글자 크기 선택"
             valueLabelDisplay="off"
             sx={{
-              color: '#4338CA',
+              color: '#1E3A8A',
               '& .MuiSlider-markLabel': { fontSize: '0.8125rem' },
             }}
           />
@@ -210,7 +210,7 @@ export default function AccessibilityDialog({
                     minHeight: 64,
                     justifyContent: 'flex-start',
                     '&:focus-visible': {
-                      outline: '3px solid #4338CA',
+                      outline: '3px solid #1E3A8A',
                       outlineOffset: -3,
                     },
                   }}
@@ -221,14 +221,14 @@ export default function AccessibilityDialog({
                       width: 40,
                       height: 40,
                       borderRadius: '10px',
-                      bgcolor: '#EEF0FF',
+                      bgcolor: '#EEF2FF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0,
                     }}
                   >
-                    <Icon size={20} color="#4338CA" />
+                    <Icon size={20} color="#1E3A8A" />
                   </Box>
                   <Box sx={{ flex: 1, textAlign: 'left' }}>
                     <Typography sx={{ fontSize: '0.9375rem', fontWeight: 600 }}>
@@ -290,14 +290,14 @@ export default function AccessibilityDialog({
                       width: 40,
                       height: 40,
                       borderRadius: '10px',
-                      bgcolor: '#FCE7F3',
+                      bgcolor: '#ECFDF5',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0,
                     }}
                   >
-                    <Icon size={20} color="#BE185D" />
+                    <Icon size={20} color="#15803D" />
                   </Box>
                   <Box sx={{ flex: 1, textAlign: 'left' }}>
                     <Typography sx={{ fontSize: '0.9375rem', fontWeight: 600 }}>
