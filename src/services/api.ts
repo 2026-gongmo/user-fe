@@ -22,6 +22,7 @@ import {
   campusNews,
   externalActivities,
 } from '../data/mockData';
+import { sampleCourseSchedules } from '../data/sampleSchedules';
 import type {
   Companion,
   Facility,
@@ -29,6 +30,7 @@ import type {
   SosCallPayload,
   UserProfile,
   AccessProfile,
+  CourseSchedule,
 } from '../types';
 
 // ============================================================
@@ -178,4 +180,8 @@ export async function getCampusNews() {
 
 export async function getExternalActivities() {
   return delay(clone(externalActivities));
+}
+
+export async function getCourseSchedules(): Promise<CourseSchedule[]> {
+  return delay(clone(sampleCourseSchedules));
 }

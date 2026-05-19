@@ -36,6 +36,7 @@ import {
   Gem,
 } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
+import ScheduleRouteCard from '../components/ScheduleRouteCard';
 import {
   heroBanners,
   matchCategories,
@@ -370,6 +371,8 @@ export default function HomePage() {
             ))}
           </Box>
         </Box>
+
+        <ScheduleRouteCard currentStartNodeId="1" />
 
         {/* 인기 관심 분야 TOP 5 */}
         <Box component="section" aria-labelledby="match-cat-heading" sx={{ mt: 0.5, mb: 2.5 }}>

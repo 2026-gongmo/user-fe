@@ -160,3 +160,9 @@ export interface ExternalActivity {
   category: string;
   benefit: string;
 }
+
+export type {
+  CourseSchedule,
+  ScheduleDifficultyLabel,
+  ScheduleRouteRecommendation,
+} from './types/schedule';
