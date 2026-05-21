@@ -2,8 +2,19 @@ import type { CourseSchedule } from '../types/schedule';
 
 export const sampleCourseSchedules: CourseSchedule[] = [
   {
+    id: 'course-inclusive-ai-thu',
+    courseName: 'AI 서비스 기획',
+    dayOfWeek: 4,
+    startMinutes: 600,
+    endMinutes: 690,
+    locationName: '공학관',
+    destinationNodeId: '3',
+    roomName: '304호',
+    memo: '비 예보와 후문 경사 구간이 있어 정문 우회 경로를 추천해요.',
+  },
+  {
     id: 'course-algorithm-mon',
-    courseName: '알고리즘',
+    courseName: '문제해결 기초',
     dayOfWeek: 1,
     startMinutes: 600,
     endMinutes: 690,

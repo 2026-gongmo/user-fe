@@ -23,3 +23,14 @@ export interface ScheduleRouteRecommendation {
   warnings: string[];
   recommendedDepartureMinutes: number;
 }
+
+export interface ScheduleRouteRequest {
+  source: 'schedule';
+  courseId: string;
+  courseName: string;
+  destinationNodeId: string;
+  destinationName: string;
+  roomName: string;
+  difficultyLabel: ScheduleDifficultyLabel;
+  warnings: string[];
+}

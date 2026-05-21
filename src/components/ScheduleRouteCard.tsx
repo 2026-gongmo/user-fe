@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Alert,
   Box,
@@ -9,7 +10,6 @@ import {
   Divider,
   List,
   ListItemButton,
-  Snackbar,
   Typography,
 } from '@mui/material';
 import {
@@ -21,6 +21,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 
+import CompanionTicketDialog from './CompanionTicketDialog';
 import { facilities } from '../data/mockData';
 import { sampleCourseSchedules } from '../data/sampleSchedules';
 import {
@@ -29,15 +30,14 @@ import {
   getNextSchedule,
   getTodaySchedules,
 } from '../utils/scheduleUtils';
-import type { ScheduleDifficultyLabel } from '../types/schedule';
+import type { ScheduleDifficultyLabel, ScheduleRouteRequest } from '../types/schedule';
 
 interface ScheduleRouteCardProps {
   currentStartNodeId: string;
   onSelectRoute?: (startNodeId: string, destinationNodeId: string) => void;
 }
 
-const DEMO_COMPANION_MESSAGE =
-  '동행 요청 기능은 데모입니다. 실제 서비스에서는 학교 인증 도우미 또는 장애학생지원센터와 연결됩니다.';
+const DEMO_NOW = new Date(2026, 4, 21, 9, 20);
 
 const difficultyColor: Record<ScheduleDifficultyLabel, string> = {
   '편하게 이동 가능': '#047857',
@@ -49,9 +49,10 @@ export default function ScheduleRouteCard({
   currentStartNodeId,
   onSelectRoute,
 }: ScheduleRouteCardProps) {
+  const navigate = useNavigate();
   const [routeNotice, setRouteNotice] = useState('');
   const [companionOpen, setCompanionOpen] = useState(false);
-  const now = useMemo(() => new Date(), []);
+  const now = useMemo(() => DEMO_NOW, []);
 
   const todaySchedules = useMemo(
     () => getTodaySchedules(sampleCourseSchedules, now),
@@ -77,7 +78,25 @@ export default function ScheduleRouteCard({
   const startLocation =
     facilities.find((facility) => String(facility.id) === currentStartNodeId) ??
     facilities[0];
+  const destinationLocation = recommendation
+    ? facilities.find((facility) => String(facility.id) === recommendation.destinationNodeId)
+    : null;
   const difficulty = recommendation?.difficultyLabel ?? '편하게 이동 가능';
+
+  const routeRequest = useMemo<ScheduleRouteRequest | null>(() => {
+    if (!recommendation) return null;
+
+    return {
+      source: 'schedule',
+      courseId: recommendation.course.id,
+      courseName: recommendation.course.courseName,
+      destinationNodeId: recommendation.destinationNodeId,
+      destinationName: destinationLocation?.name ?? recommendation.course.locationName,
+      roomName: recommendation.course.roomName,
+      difficultyLabel: recommendation.difficultyLabel,
+      warnings: recommendation.warnings,
+    };
+  }, [destinationLocation?.name, recommendation]);
 
   const handleShowRoute = () => {
     if (!recommendation) {
@@ -91,11 +110,11 @@ export default function ScheduleRouteCard({
       return;
     }
 
-    console.log('schedule route selected', {
-      startNodeId: recommendation.startNodeId,
-      destinationNodeId: recommendation.destinationNodeId,
+    navigate('/map', {
+      state: {
+        routeRequest,
+      },
     });
-    setRouteNotice('현재는 데모 안내만 표시합니다. 지도 연결 시 이 경로가 선택됩니다.');
   };
 
   return (
@@ -118,10 +137,10 @@ export default function ScheduleRouteCard({
               component="h2"
               sx={{ fontWeight: 800, fontSize: '1.25rem', color: '#064E3B' }}
             >
-              오늘의 수업길
+              오늘의 AI 수업길
             </Typography>
             <Typography sx={{ color: '#4B5563', fontSize: '0.9375rem', mt: 0.25 }}>
-              오늘 수업과 다음 장소까지 가는 길을 쉽게 확인해요.
+              천안시 대학가 이동약자·장애학생을 위한 안전한 통학·수업길을 미리 확인해요.
             </Typography>
           </Box>
         </Box>
@@ -227,13 +246,13 @@ export default function ScheduleRouteCard({
                 </Box>
                 <Box sx={{ flex: 1 }}>
                   <Typography sx={{ color: '#4B5563', fontSize: '0.875rem', fontWeight: 700 }}>
-                    다음 수업 강조 카드
+                    AI 위험 예측
                   </Typography>
                   <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, mt: 0.25 }}>
-                    {recommendation.course.courseName}
+                    오늘 {formatMinutes(recommendation.course.startMinutes)} 수업 이동은 {difficulty}예요.
                   </Typography>
                   <Typography sx={{ color: '#374151', fontSize: '1rem', mt: 0.5 }}>
-                    {recommendation.course.locationName} {recommendation.course.roomName}
+                    {recommendation.course.courseName} · {recommendation.course.locationName} {recommendation.course.roomName}
                   </Typography>
                 </Box>
               </Box>
@@ -284,16 +303,23 @@ export default function ScheduleRouteCard({
                   />
                 </Box>
                 {recommendation.warnings.length > 0 ? (
-                  <Box component="ul" sx={{ m: 0, pl: 2.5, color: '#374151' }}>
+                  <Box role="list" sx={{ display: 'grid', gap: 0.5 }}>
                     {recommendation.warnings.map((warning) => (
-                      <Typography component="li" key={warning} sx={{ fontSize: '0.9375rem', mb: 0.25 }}>
-                        {warning}
-                      </Typography>
+                      <Box
+                        key={warning}
+                        role="listitem"
+                        sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}
+                      >
+                        <AlertTriangle size={17} color={difficultyColor[difficulty]} aria-hidden="true" />
+                        <Typography sx={{ color: '#374151', fontSize: '1rem', fontWeight: 700 }}>
+                          {warning}
+                        </Typography>
+                      </Box>
                     ))}
                   </Box>
                 ) : (
-                  <Typography sx={{ color: '#374151', fontSize: '0.9375rem' }}>
-                    지금은 특별한 주의 문구가 없습니다.
+                  <Typography sx={{ color: '#374151', fontSize: '1rem' }}>
+                    지금은 특별히 주의할 점이 없습니다.
                   </Typography>
                 )}
               </Box>
@@ -303,7 +329,7 @@ export default function ScheduleRouteCard({
                 severity="info"
                 sx={{ borderRadius: '10px', mb: 1.5, bgcolor: '#EEF2FF', color: '#172554' }}
               >
-                데모에서는 이동 유형만 사용합니다. 도움 요청은 인증된 도움 제공자 또는 장애학생지원센터와 연결됩니다.
+                AI 위험 예측이 기상 공공데이터와 학생 제보 데이터를 함께 보고 정문 우회 경로를 추천해요.
               </Alert>
 
               {routeNotice && (
@@ -345,7 +371,7 @@ export default function ScheduleRouteCard({
                     '&:hover': { bgcolor: '#ECFDF5', borderColor: '#065F46' },
                   }}
                 >
-                  동행 요청하기
+                  동행 요청
                 </Button>
               </Box>
             </CardContent>
@@ -357,20 +383,11 @@ export default function ScheduleRouteCard({
         )}
       </CardContent>
 
-      <Snackbar
+      <CompanionTicketDialog
         open={companionOpen}
-        autoHideDuration={5000}
         onClose={() => setCompanionOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          severity="info"
-          onClose={() => setCompanionOpen(false)}
-          sx={{ width: '100%', borderRadius: '10px' }}
-        >
-          {DEMO_COMPANION_MESSAGE}
-        </Alert>
-      </Snackbar>
+        routeRequest={routeRequest}
+      />
     </Card>
   );
 }

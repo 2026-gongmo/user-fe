@@ -63,6 +63,15 @@ export interface Facility {
   y: number;
 }
 
+export interface RouteRiskPoint {
+  id: number;
+  title: string;
+  description: string;
+  level: '주의' | '높음';
+  x: number;
+  y: number;
+}
+
 export type MatchStatus = '모집중' | '매칭대기' | '확정' | '진행중' | '종료';
 export type MatchRole = '이용자' | '제공자';
 
@@ -165,4 +174,5 @@ export type {
   CourseSchedule,
   ScheduleDifficultyLabel,
   ScheduleRouteRecommendation,
+  ScheduleRouteRequest,
 } from './types/schedule';

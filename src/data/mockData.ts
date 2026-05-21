@@ -19,6 +19,7 @@ import type {
   MatchCategory,
   CampusNews,
   ExternalActivity,
+  RouteRiskPoint,
 } from '../types';
 
 // ============================================================
@@ -79,6 +80,33 @@ export const facilities: Facility[] = [
 ];
 
 export const recentFacilitySearches = ['중앙도서관', '학생회관', '공학관 엘리베이터'];
+
+export const routeRiskPoints: RouteRiskPoint[] = [
+  {
+    id: 1,
+    title: '후문 경사 구간',
+    description: '비가 오면 미끄러울 수 있어 정문 쪽 완만한 길을 추천해요.',
+    level: '높음',
+    x: 56,
+    y: 52,
+  },
+  {
+    id: 2,
+    title: '엘리베이터 고장 제보',
+    description: '공학관 1층 엘리베이터 점검 제보가 반복되어 대체 동선을 안내해요.',
+    level: '주의',
+    x: 68,
+    y: 56,
+  },
+  {
+    id: 3,
+    title: '비 예보',
+    description: '우산과 보행 보조기구를 함께 쓰기 어려운 구간은 천천히 이동해요.',
+    level: '주의',
+    x: 44,
+    y: 46,
+  },
+];
 
 // ============================================================
 // 매칭

@@ -82,7 +82,8 @@ export function getScheduleRouteWarnings(
 
   if (!destination?.accessible) warnings.push('계단 있음');
   if (destination?.category === 'ramp') warnings.push('경사 구간 있음');
-  if (destinationNodeId === '3') warnings.push('공사 구간');
+  if (destinationNodeId === '3') warnings.push('비 예보');
+  if (destinationNodeId === '3') warnings.push('후문 경사 구간');
   if (destinationNodeId === '6') warnings.push('엘리베이터 고장 제보');
   if (date.getDay() === 1 || date.getDay() === 3) warnings.push('비 오는 날 주의');
 

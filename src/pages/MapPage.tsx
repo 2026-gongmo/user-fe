@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Card,
+  CardContent,
   TextField,
   Chip,
   Box,
@@ -14,6 +16,7 @@ import {
   Divider,
   ButtonBase,
   Button,
+  Alert,
 } from '@mui/material';
 import {
   Search,
@@ -29,10 +32,26 @@ import {
   Clock,
   ChevronRight,
   ChevronUp,
+  AlertTriangle,
+  HandHeart,
+  Megaphone,
+  CheckCircle2,
+  ShieldCheck,
 } from 'lucide-react';
 
-import { facilities as locations, recentFacilitySearches as recentSearches } from '../data/mockData';
-import type { Facility as Location, FacilityCategory } from '../types';
+import AccessibilityReportDialog from '../components/AccessibilityReportDialog';
+import CompanionTicketDialog from '../components/CompanionTicketDialog';
+import {
+  facilities as locations,
+  recentFacilitySearches as recentSearches,
+  routeRiskPoints,
+} from '../data/mockData';
+import type {
+  Facility as Location,
+  FacilityCategory,
+  RouteRiskPoint,
+  ScheduleRouteRequest,
+} from '../types';
 
 const categories = [
   { id: 'all',      label: '전체',       icon: Building2,    color: '#1E3A8A' },
@@ -81,14 +100,85 @@ const categoryIcon = (cat: FacilityCategory) => {
 const SHEET_COLLAPSED = 92;
 const SHEET_MAX = 480;
 
+const mobilityTypeOptions = [
+  {
+    id: 'wheelchair',
+    label: '휠체어',
+    guide: '계단, 단차, 엘리베이터 고장 정보를 우선 반영합니다.',
+  },
+  {
+    id: 'crutches',
+    label: '목발',
+    guide: '급경사와 긴 이동거리를 더 주의해서 안내합니다.',
+  },
+  {
+    id: 'senior',
+    label: '고령자',
+    guide: '경사와 휴식 가능 지점을 고려해 안내합니다.',
+  },
+  {
+    id: 'stroller',
+    label: '유아차',
+    guide: '계단과 좁은 길을 피해 이동할 수 있게 안내합니다.',
+  },
+  {
+    id: 'injury',
+    label: '일시적 부상',
+    guide: '무리 없는 이동거리와 경사 구간을 함께 확인합니다.',
+  },
+] as const;
+
+type MobilityTypeId = (typeof mobilityTypeOptions)[number]['id'];
+
+const routeComparisonOptions = [
+  {
+    id: 'fast',
+    title: '빠른 길',
+    minutes: '8분',
+    caution: '계단 1곳, 급경사 1곳',
+    description: '빠르지만 이동약자에게는 불편할 수 있어요.',
+    color: '#1E3A8A',
+    bg: '#EFF6FF',
+    border: '#BFDBFE',
+    badge: '',
+  },
+  {
+    id: 'safe',
+    title: '안전한 길',
+    minutes: '11분',
+    caution: '낮음',
+    description: '계단과 급경사를 피해 이동할 수 있어요.',
+    color: '#047857',
+    bg: '#ECFDF5',
+    border: '#A7F3D0',
+    badge: '추천',
+  },
+] as const;
+
+const publicDataSources = [
+  '천안시 버스정류장 정보',
+  '기상청 단기예보',
+  '교통약자 이동지원센터 정보',
+  '장애인 편의시설 정보',
+  '천안시 교통시설 데이터',
+] as const;
+
 const getExpandedPx = () =>
   typeof window === 'undefined' ? 460 : Math.min(window.innerHeight * 0.55, SHEET_MAX);
 
 export default function MapPage() {
+  const location = useLocation();
+  const routeRequest =
+    (location.state as { routeRequest?: ScheduleRouteRequest } | null)?.routeRequest ?? null;
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selected, setSelected] = useState<Location | null>(null);
+  const [companionOpen, setCompanionOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [safeRouteSelected, setSafeRouteSelected] = useState(false);
+  const [selectedMobilityTypeId, setSelectedMobilityTypeId] =
+    useState<MobilityTypeId>('wheelchair');
 
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const [dragHeight, setDragHeight] = useState<number | null>(null);
@@ -163,6 +253,20 @@ export default function MapPage() {
       l.building.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const routeDestination = routeRequest
+    ? locations.find((loc) => String(loc.id) === routeRequest.destinationNodeId)
+    : null;
+
+  const activeRiskPoints = routeRequest ? routeRiskPoints : [];
+  const selectedMobilityType =
+    mobilityTypeOptions.find((option) => option.id === selectedMobilityTypeId) ??
+    mobilityTypeOptions[0];
+
+  const handleSelectMobilityType = (id: MobilityTypeId) => {
+    setSelectedMobilityTypeId(id);
+    setSafeRouteSelected(false);
+  };
+
   return (
     <Box
       component="main"
@@ -179,7 +283,7 @@ export default function MapPage() {
           clip: 'rect(0 0 0 0)',
         }}
       >
-        캠퍼스 배리어프리 지도
+        천안시 대학가 배리어프리 지도
       </Typography>
 
       {/* 풀스크린 지도 배경 */}
@@ -215,6 +319,37 @@ export default function MapPage() {
         aria-label={`캠퍼스 지도. ${visibleLocations.length}개 시설 표시 중. 아래 목록에서도 동일한 시설을 확인할 수 있습니다.`}
         sx={{ position: 'absolute', inset: 0 }}
       >
+        {routeRequest && (
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0 }}
+          >
+            <path
+              d="M 50 65 C 53 57, 58 48, 64 50 S 69 56, 70 60"
+              stroke="#1E3A8A"
+              strokeWidth="2.6"
+              strokeLinecap="round"
+              fill="none"
+              strokeDasharray="1 3"
+              opacity="0.92"
+            />
+            <path
+              d="M 50 65 C 48 57, 50 49, 57 44 S 68 50, 70 60"
+              stroke="#16A34A"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              fill="none"
+              opacity="0.75"
+            />
+          </svg>
+        )}
+
+        {activeRiskPoints.map((risk) => (
+          <RiskPointMarker key={risk.id} risk={risk} />
+        ))}
+
         {visibleLocations.map((loc) => {
           const color = categoryColor(loc.category);
           const Icon = categoryIcon(loc.category);
@@ -401,6 +536,323 @@ export default function MapPage() {
           })}
         </Box>
       </Box>
+
+      {routeRequest && (
+        <Card
+          component="section"
+          aria-label="수업길 안내"
+          sx={{
+            position: 'absolute',
+            top: 104,
+            left: 12,
+            right: 12,
+            zIndex: 18,
+            borderRadius: '12px',
+            border: '1px solid #BFDBFE',
+            boxShadow: '0 8px 20px rgba(15,23,42,0.14)',
+            maxHeight: 'calc(100% - 208px)',
+            overflowY: 'auto',
+          }}
+        >
+          <CardContent sx={{ p: 1.75, '&:last-child': { pb: 1.75 } }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.25, mb: 1.25 }}>
+              <Box
+                aria-hidden="true"
+                sx={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: '10px',
+                  bgcolor: '#EEF2FF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Navigation size={21} color="#1E3A8A" />
+              </Box>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography sx={{ color: '#1E3A8A', fontSize: '0.8125rem', fontWeight: 800 }}>
+                  수업길 안내
+                </Typography>
+                <Typography
+                  component="h2"
+                  sx={{ color: '#111827', fontSize: '1.0625rem', fontWeight: 800, mt: 0.125 }}
+                >
+                  {routeRequest.courseName}까지 {selectedMobilityType.label} 기준 안전 이동 경로를 추천해요.
+                </Typography>
+                <Typography sx={{ color: '#4B5563', fontSize: '0.875rem', mt: 0.25 }}>
+                  도착: {routeRequest.destinationName} {routeRequest.roomName}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mb: 1.25 }}>
+              <Chip
+                icon={<ShieldCheck size={13} aria-hidden="true" />}
+                label={routeRequest.difficultyLabel}
+                sx={{
+                  bgcolor: '#EEF2FF',
+                  color: '#1E3A8A',
+                  fontWeight: 800,
+                  '& .MuiChip-icon': { color: '#1E3A8A' },
+                }}
+              />
+              {routeRequest.warnings.slice(0, 2).map((warning) => (
+                <Chip
+                  key={warning}
+                  icon={<AlertTriangle size={13} aria-hidden="true" />}
+                  label={warning}
+                  sx={{
+                    bgcolor: '#FEF3C7',
+                    color: '#92400E',
+                    fontWeight: 800,
+                    '& .MuiChip-icon': { color: '#92400E' },
+                  }}
+                />
+              ))}
+            </Box>
+
+            <Alert
+              severity="info"
+              sx={{ borderRadius: '10px', mb: 1.25, bgcolor: '#ECFDF5', color: '#065F46' }}
+            >
+              AI 위험 예측은 천안시 공공데이터와 제보 데이터를 함께 반영해요. 주의할 구간은 노란 마커로 확인할 수 있어요.
+            </Alert>
+
+            <Box
+              component="section"
+              aria-label="이동 유형 선택"
+              sx={{
+                mb: 1.25,
+                p: 1.25,
+                borderRadius: '12px',
+                bgcolor: '#fff',
+                border: '1px solid #D1FAE5',
+              }}
+            >
+              <Typography sx={{ color: '#064E3B', fontSize: '1rem', fontWeight: 900, mb: 1 }}>
+                내 이동 유형
+              </Typography>
+              <Box
+                role="radiogroup"
+                aria-label="이동 유형"
+                sx={{
+                  display: 'flex',
+                  gap: 0.75,
+                  overflowX: 'auto',
+                  pb: 0.25,
+                  '&::-webkit-scrollbar': { display: 'none' },
+                }}
+              >
+                {mobilityTypeOptions.map((option) => {
+                  const active = option.id === selectedMobilityTypeId;
+                  return (
+                    <ButtonBase
+                      key={option.id}
+                      role="radio"
+                      aria-checked={active}
+                      onClick={() => handleSelectMobilityType(option.id)}
+                      sx={{
+                        minHeight: 44,
+                        px: 1.5,
+                        borderRadius: '999px',
+                        bgcolor: active ? '#047857' : '#F8FAFC',
+                        color: active ? '#fff' : '#064E3B',
+                        border: active ? '2px solid #047857' : '1px solid #BBF7D0',
+                        fontSize: '0.9375rem',
+                        fontWeight: 900,
+                        flexShrink: 0,
+                        boxShadow: active ? '0 4px 12px rgba(4,120,87,0.24)' : 'none',
+                        '&:focus-visible': {
+                          outline: '3px solid #1E3A8A',
+                          outlineOffset: 2,
+                        },
+                      }}
+                    >
+                      {option.label}
+                    </ButtonBase>
+                  );
+                })}
+              </Box>
+              <Alert
+                severity="success"
+                sx={{
+                  mt: 1,
+                  borderRadius: '10px',
+                  bgcolor: '#ECFDF5',
+                  color: '#065F46',
+                  '& .MuiAlert-icon': { color: '#047857' },
+                }}
+              >
+                {selectedMobilityType.guide}
+              </Alert>
+            </Box>
+
+            <Box
+              component="section"
+              aria-label="빠른 길과 안전한 길 비교"
+              sx={{
+                mb: 1.25,
+                p: 1.25,
+                borderRadius: '12px',
+                bgcolor: '#F8FAFC',
+                border: '1px solid #E5E7EB',
+              }}
+            >
+              <Typography sx={{ color: '#111827', fontSize: '1rem', fontWeight: 900, mb: 1 }}>
+                빠른 길과 안전한 길 비교
+              </Typography>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+                  gap: 1,
+                }}
+              >
+                {routeComparisonOptions.map((option) => (
+                  <RouteCompareCard
+                    key={option.id}
+                    option={option}
+                    safetyDescription={selectedMobilityType.guide}
+                  />
+                ))}
+              </Box>
+              <Button
+                fullWidth
+                variant="contained"
+                startIcon={<ShieldCheck size={18} aria-hidden="true" />}
+                onClick={() => setSafeRouteSelected(true)}
+                sx={{
+                  mt: 1,
+                  minHeight: 48,
+                  bgcolor: '#047857',
+                  borderRadius: '12px',
+                  boxShadow: 'none',
+                  textTransform: 'none',
+                  fontSize: '0.9375rem',
+                  fontWeight: 800,
+                  '&:hover': { bgcolor: '#065F46' },
+                }}
+              >
+                안전한 길 선택
+              </Button>
+              {safeRouteSelected && (
+                <Alert
+                  severity="success"
+                  sx={{
+                    mt: 1,
+                    borderRadius: '10px',
+                    bgcolor: '#ECFDF5',
+                    color: '#065F46',
+                    '& .MuiAlert-icon': { color: '#047857' },
+                  }}
+                >
+                  안전한 경로가 선택되었습니다.
+                </Alert>
+              )}
+            </Box>
+
+            <Box
+              component="section"
+              aria-label="이번 경로 분석에 사용한 공공데이터"
+              sx={{
+                mb: 1.25,
+                p: 1.5,
+                borderRadius: '12px',
+                bgcolor: '#F8FAFC',
+                border: '1px solid #BFDBFE',
+              }}
+            >
+              <Typography sx={{ color: '#172554', fontSize: '1rem', fontWeight: 900, mb: 1 }}>
+                이번 경로 분석에 사용한 공공데이터
+              </Typography>
+              <Box sx={{ display: 'grid', gap: 0.75, mb: 1.25 }}>
+                {publicDataSources.map((source) => (
+                  <Box
+                    key={source}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.75,
+                      minHeight: 34,
+                    }}
+                  >
+                    <CheckCircle2 size={18} color="#047857" aria-hidden="true" />
+                    <Typography sx={{ color: '#111827', fontSize: '0.9375rem', fontWeight: 800 }}>
+                      {source}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+              <Typography sx={{ color: '#374151', fontSize: '0.9375rem', fontWeight: 700 }}>
+                공공데이터는 학교까지 오는 길과 대학가 주변 접근성 분석에 활용되고, 캠퍼스 내부의 실제 단차·경사 정보는 학생 제보 데이터로 보완됩니다.
+              </Typography>
+            </Box>
+
+            <Button
+              fullWidth
+              variant="contained"
+              startIcon={<HandHeart size={18} aria-hidden="true" />}
+              onClick={() => setCompanionOpen(true)}
+              sx={{
+                minHeight: 48,
+                bgcolor: '#047857',
+                borderRadius: '12px',
+                boxShadow: 'none',
+                textTransform: 'none',
+                fontSize: '0.9375rem',
+                '&:hover': { bgcolor: '#065F46' },
+              }}
+            >
+              안전 도움 요청하기
+            </Button>
+            <Button
+              fullWidth
+              variant="outlined"
+              startIcon={<Megaphone size={18} aria-hidden="true" />}
+              onClick={() => setReportOpen(true)}
+              sx={{
+                mt: 1,
+                minHeight: 48,
+                borderColor: '#1E3A8A',
+                color: '#1E3A8A',
+                bgcolor: '#fff',
+                borderRadius: '12px',
+                textTransform: 'none',
+                fontSize: '0.9375rem',
+                '&:hover': { bgcolor: '#EEF2FF', borderColor: '#172554' },
+              }}
+            >
+              불편 제보하기
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {!routeRequest && (
+        <Button
+          variant="contained"
+          startIcon={<Megaphone size={18} aria-hidden="true" />}
+          onClick={() => setReportOpen(true)}
+          sx={{
+            position: 'absolute',
+            top: 104,
+            left: 12,
+            right: 12,
+            zIndex: 18,
+            minHeight: 48,
+            bgcolor: '#047857',
+            borderRadius: '12px',
+            boxShadow: '0 8px 20px rgba(15,23,42,0.14)',
+            textTransform: 'none',
+            fontSize: '0.9375rem',
+            '&:hover': { bgcolor: '#065F46' },
+          }}
+        >
+          불편 제보하기
+        </Button>
+      )}
 
       {/* 우측 내 위치 버튼 (시트 위에 따라붙음) */}
       <Box
@@ -636,6 +1088,18 @@ export default function MapPage() {
                   <Typography sx={{ color: '#4B5563', fontSize: '0.8125rem' }}>
                     {selected.building}
                   </Typography>
+                  {routeDestination?.id === selected.id && (
+                    <Chip
+                      label="오늘 수업 목적지"
+                      size="small"
+                      sx={{
+                        mt: 0.75,
+                        bgcolor: '#EEF2FF',
+                        color: '#1E3A8A',
+                        fontWeight: 800,
+                      }}
+                    />
+                  )}
                 </Box>
               </Box>
 
@@ -950,6 +1414,121 @@ export default function MapPage() {
           </Box>
         )}
       </Drawer>
+      <CompanionTicketDialog
+        open={companionOpen}
+        onClose={() => setCompanionOpen(false)}
+        routeRequest={routeRequest}
+      />
+      <AccessibilityReportDialog
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        defaultPlaceName={selected?.name ?? routeRequest?.destinationName ?? '공학관 후문 경사로'}
+      />
+    </Box>
+  );
+}
+
+function RouteCompareCard({
+  option,
+  safetyDescription,
+}: {
+  option: (typeof routeComparisonOptions)[number];
+  safetyDescription: string;
+}) {
+  const description = option.id === 'safe' ? safetyDescription : option.description;
+
+  return (
+    <Box
+      sx={{
+        p: 1.5,
+        borderRadius: '12px',
+        bgcolor: option.bg,
+        border: `2px solid ${option.border}`,
+        minHeight: 172,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+        <Typography sx={{ color: option.color, fontSize: '1.125rem', fontWeight: 900 }}>
+          {option.title}
+        </Typography>
+        {option.badge && (
+          <Chip
+            label={option.badge}
+            size="small"
+            sx={{
+              bgcolor: '#047857',
+              color: '#fff',
+              height: 24,
+              fontSize: '0.75rem',
+              fontWeight: 900,
+            }}
+          />
+        )}
+      </Box>
+
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 0.75 }}>
+        <Box>
+          <Typography sx={{ color: '#4B5563', fontSize: '0.75rem', fontWeight: 800 }}>
+            예상 시간
+          </Typography>
+          <Typography sx={{ color: '#111827', fontSize: '1.375rem', fontWeight: 900 }}>
+            {option.minutes}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography sx={{ color: '#4B5563', fontSize: '0.75rem', fontWeight: 800 }}>
+            주의할 점
+          </Typography>
+          <Typography sx={{ color: option.color, fontSize: '0.9375rem', fontWeight: 900 }}>
+            {option.caution}
+          </Typography>
+        </Box>
+      </Box>
+
+      <Typography sx={{ color: '#374151', fontSize: '0.9375rem', fontWeight: 700, mt: 'auto' }}>
+        {description}
+      </Typography>
+    </Box>
+  );
+}
+
+function RiskPointMarker({ risk }: { risk: RouteRiskPoint }) {
+  const color = risk.level === '높음' ? '#DC2626' : '#F59E0B';
+
+  return (
+    <Box
+      aria-label={`${risk.title}, ${risk.description}`}
+      role="img"
+      sx={{
+        position: 'absolute',
+        left: `${risk.x}%`,
+        top: `${risk.y}%`,
+        transform: 'translate(-50%, -100%)',
+        zIndex: 5,
+        pointerEvents: 'none',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 0.5,
+          bgcolor: '#fff',
+          border: `2px solid ${color}`,
+          borderRadius: '999px',
+          px: 0.875,
+          py: 0.5,
+          boxShadow: '0 4px 12px rgba(15,23,42,0.18)',
+        }}
+      >
+        <AlertTriangle size={15} color={color} aria-hidden="true" />
+        <Typography sx={{ color, fontSize: '0.75rem', fontWeight: 900, whiteSpace: 'nowrap' }}>
+          {risk.title}
+        </Typography>
+      </Box>
     </Box>
   );
 }

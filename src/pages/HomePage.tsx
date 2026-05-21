@@ -10,6 +10,7 @@ import {
   Divider,
   LinearProgress,
   Badge,
+  Collapse,
   ButtonBase,
   Button,
   List,
@@ -24,6 +25,7 @@ import {
   ThumbsUp,
   Eye,
   ChevronRight,
+  ChevronUp,
   Flame,
   Clock,
   Accessibility,
@@ -88,9 +90,20 @@ const activities = [
   },
 ];
 
+const demoFlowSteps = [
+  '이동 유형 선택',
+  '오늘의 수업길 주의할 점 확인',
+  '빠른 길과 안전한 길 비교',
+  '수업길 보기로 지도 확인',
+  '동행 요청 티켓 확인',
+  '불편한 장소 제보',
+  'AI 분석 결과 확인',
+] as const;
+
 export default function HomePage() {
   const heroScrollRef = useRef<HTMLDivElement | null>(null);
   const [heroIndex, setHeroIndex] = useState(0);
+  const [demoGuideOpen, setDemoGuideOpen] = useState(false);
 
   const handleHeroScroll = () => {
     const el = heroScrollRef.current;
@@ -211,6 +224,118 @@ export default function HomePage() {
       </Box>
 
       <Box sx={{ px: 2, mt: -2.5 }}>
+        <Card
+          component="section"
+          aria-labelledby="demo-flow-heading"
+          sx={{
+            mb: 1.5,
+            borderRadius: '12px',
+            border: '1px solid #DBEAFE',
+            boxShadow: '0 6px 18px rgba(15,23,42,0.10)',
+            overflow: 'hidden',
+          }}
+        >
+          <ButtonBase
+            onClick={() => setDemoGuideOpen((open) => !open)}
+            aria-expanded={demoGuideOpen}
+            aria-controls="demo-flow-content"
+            sx={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1.5,
+              p: 2,
+              textAlign: 'left',
+              bgcolor: '#F8FAFC',
+              '&:focus-visible': {
+                outline: '3px solid #1E3A8A',
+                outlineOffset: -3,
+              },
+            }}
+          >
+            <Box sx={{ minWidth: 0 }}>
+              <Typography
+                id="demo-flow-heading"
+                component="h2"
+                sx={{ color: '#172554', fontSize: '1.125rem', fontWeight: 900 }}
+              >
+                발표 시연 흐름
+              </Typography>
+              <Typography sx={{ color: '#4B5563', fontSize: '0.875rem', mt: 0.25 }}>
+                공모전 발표에서는 아래 순서로 서비스를 시연할 수 있습니다.
+              </Typography>
+              <Typography sx={{ color: '#1E3A8A', fontSize: '0.8125rem', fontWeight: 800, mt: 0.5 }}>
+                천안시 대학가 이동약자·장애학생 안전 이동 데모
+              </Typography>
+            </Box>
+            <Box
+              aria-hidden="true"
+              sx={{
+                display: 'flex',
+                color: '#1E3A8A',
+                transform: demoGuideOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease',
+                flexShrink: 0,
+              }}
+            >
+              <ChevronUp size={22} />
+            </Box>
+          </ButtonBase>
+
+          <Collapse in={demoGuideOpen} timeout="auto" unmountOnExit>
+            <Box
+              id="demo-flow-content"
+              sx={{
+                px: 2,
+                pb: 2,
+                pt: 0.5,
+                bgcolor: '#fff',
+              }}
+            >
+              <Box sx={{ display: 'grid', gap: 0.75 }}>
+                {demoFlowSteps.map((step, index) => (
+                  <Box
+                    key={step}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      minHeight: 40,
+                      p: 1,
+                      borderRadius: '10px',
+                      bgcolor: index % 2 === 0 ? '#EFF6FF' : '#F8FAFC',
+                      border: '1px solid #E5E7EB',
+                    }}
+                  >
+                    <Box
+                      aria-hidden="true"
+                      sx={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        bgcolor: '#1E3A8A',
+                        color: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.8125rem',
+                        fontWeight: 900,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {index + 1}
+                    </Box>
+                    <Typography sx={{ color: '#111827', fontSize: '0.9375rem', fontWeight: 800 }}>
+                      {step}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          </Collapse>
+        </Card>
+
         {/* 히어로 배너 - 함께하는 활동 광고 (풀폭) */}
         <Box
           component="section"
