@@ -41,13 +41,13 @@ const visualSettings: Setting[] = [
     id: 'reduceMotion',
     icon: Zap,
     label: '모션 줄이기',
-    sub: '애니메이션과 전환 효과를 최소화',
+    sub: '화면 움직임을 줄입니다',
   },
   {
     id: 'screenReader',
     icon: Eye,
-    label: '스크린리더 최적화',
-    sub: '레이아웃과 라벨을 음성 출력에 최적화',
+    label: '음성 안내에 맞게 보기',
+    sub: '화면 내용을 더 쉽게 들을 수 있게 합니다',
   },
 ];
 
@@ -56,7 +56,7 @@ const captionSettings: Setting[] = [
     id: 'captionDefault',
     icon: Captions,
     label: '영상 자막 기본 표시',
-    sub: '모든 영상에 자막 자동 활성화',
+    sub: '영상 자막을 처음부터 보여줍니다',
     defaultOn: true,
   },
   {
@@ -69,7 +69,7 @@ const captionSettings: Setting[] = [
     id: 'audioDescription',
     icon: Volume2,
     label: '화면 음성 해설',
-    sub: '이미지·UI를 음성으로 설명합니다',
+    sub: '이미지와 화면 요소를 음성으로 설명합니다',
   },
 ];
 
@@ -130,7 +130,7 @@ export default function AccessibilityDialog({
           aria-labelledby="a11y-font"
           sx={{
             bgcolor: '#F9FAFB',
-            borderRadius: '12px',
+            borderRadius: '8px',
             p: 2,
             mb: 2.5,
           }}
@@ -186,7 +186,7 @@ export default function AccessibilityDialog({
         <Box
           sx={{
             bgcolor: '#fff',
-            borderRadius: '12px',
+            borderRadius: '8px',
             border: '1px solid #E5E7EB',
             mb: 2.5,
           }}
@@ -220,7 +220,7 @@ export default function AccessibilityDialog({
                     sx={{
                       width: 40,
                       height: 40,
-                      borderRadius: '10px',
+                      borderRadius: '8px',
                       bgcolor: '#EEF2FF',
                       display: 'flex',
                       alignItems: 'center',
@@ -259,7 +259,7 @@ export default function AccessibilityDialog({
         <Box
           sx={{
             bgcolor: '#fff',
-            borderRadius: '12px',
+            borderRadius: '8px',
             border: '1px solid #E5E7EB',
             mb: 2.5,
           }}
@@ -289,7 +289,7 @@ export default function AccessibilityDialog({
                     sx={{
                       width: 40,
                       height: 40,
-                      borderRadius: '10px',
+                      borderRadius: '8px',
                       bgcolor: '#ECFDF5',
                       display: 'flex',
                       alignItems: 'center',
@@ -328,7 +328,7 @@ export default function AccessibilityDialog({
         <Box
           sx={{
             bgcolor: '#fff',
-            borderRadius: '12px',
+            borderRadius: '8px',
             border: '1px solid #E5E7EB',
             mb: 4,
           }}
@@ -351,7 +351,7 @@ export default function AccessibilityDialog({
               sx={{
                 width: 40,
                 height: 40,
-                borderRadius: '10px',
+                borderRadius: '8px',
                 bgcolor: '#D1FAE5',
                 display: 'flex',
                 alignItems: 'center',

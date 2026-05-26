@@ -53,7 +53,7 @@ export default function SosDialog({
         sendSosCall({
           targetId,
           messages: ['긴급 도움이 필요합니다'],
-          customMessage: '장애학생 위치정보 자동 공유',
+          customMessage: '긴급 도움 위치 공유',
           location: LOCATION_LABEL,
         }),
       ),
@@ -88,7 +88,7 @@ export default function SosDialog({
     >
       <Box
         sx={{
-          bgcolor: '#B91C1C',
+          bgcolor: '#B42318',
           color: '#fff',
           px: 2,
           pt: 2,
@@ -102,19 +102,19 @@ export default function SosDialog({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <ShieldAlert size={24} aria-hidden="true" />
             <Typography id="sos-title" component="h1" sx={{ fontSize: '1.25rem', fontWeight: 800 }}>
-              긴급 도움 호출
+              긴급 도움 요청
             </Typography>
           </Box>
           <IconButton
             onClick={handleClose}
-            aria-label="긴급 호출 화면 닫기"
+            aria-label="긴급 도움 화면 닫기"
             sx={{ color: '#fff', minWidth: 44, minHeight: 44 }}
           >
             <X size={22} aria-hidden="true" />
           </IconButton>
         </Box>
         <Typography sx={{ fontSize: '0.875rem', color: '#FECACA' }}>
-          보호자와 장애학생지원센터에 현재 위치를 바로 전송합니다
+          보호자와 학교 지원센터에 현재 위치를 바로 전송합니다
         </Typography>
         <Box
           sx={{
@@ -123,7 +123,7 @@ export default function SosDialog({
             alignItems: 'center',
             gap: 1,
             bgcolor: 'rgba(255,255,255,0.15)',
-            borderRadius: '12px',
+            borderRadius: '8px',
             px: 1.5,
             py: 1,
           }}
@@ -131,7 +131,7 @@ export default function SosDialog({
         >
           <MapPin size={16} aria-hidden="true" />
           <Typography sx={{ fontSize: '0.875rem', fontWeight: 600 }}>
-            현재 위치: {LOCATION_LABEL} (자동 감지)
+            현재 위치: {LOCATION_LABEL} (확인됨)
           </Typography>
         </Box>
       </Box>
@@ -147,7 +147,7 @@ export default function SosDialog({
             )
           }
           sx={{
-            borderRadius: '12px',
+            borderRadius: '8px',
             bgcolor: sent ? '#ECFDF5' : '#FEF3C7',
             color: sent ? '#065F46' : '#92400E',
             mb: 2,
@@ -155,12 +155,12 @@ export default function SosDialog({
           }}
         >
           <Typography variant="body2" sx={{ fontWeight: 800 }}>
-            {sending ? '위치정보 전송 중' : '위치정보 전송 완료'}
+            {sending ? '위치 정보 전송 중' : '위치 정보 전송 완료'}
           </Typography>
           <Typography variant="caption">
             {sending
-              ? '보호자와 장애학생지원센터에 알림을 보내고 있습니다.'
-              : '보호자와 장애학생지원센터에 위치정보가 전달되었습니다.'}
+              ? '보호자와 학교 지원센터에 알림을 보내고 있습니다.'
+              : '보호자와 학교 지원센터에 위치 정보가 전달되었습니다.'}
           </Typography>
         </Alert>
 
@@ -171,7 +171,7 @@ export default function SosDialog({
               <Card
                 key={target.id}
                 sx={{
-                  borderRadius: '12px',
+                  borderRadius: '8px',
                   boxShadow: 'none',
                   border: '1px solid #E5E7EB',
                 }}
@@ -236,11 +236,11 @@ export default function SosDialog({
           aria-label="119 신고하기"
           sx={{
             minHeight: 56,
-            borderRadius: '12px',
+            borderRadius: '8px',
             textTransform: 'none',
             fontSize: '1rem',
             fontWeight: 800,
-            bgcolor: '#B91C1C',
+            bgcolor: '#B42318',
             color: '#fff',
             boxShadow: 'none',
             '&:hover': { bgcolor: '#991B1B' },

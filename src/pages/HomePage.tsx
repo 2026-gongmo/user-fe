@@ -10,7 +10,6 @@ import {
   Divider,
   LinearProgress,
   Badge,
-  Collapse,
   ButtonBase,
   Button,
   List,
@@ -25,7 +24,6 @@ import {
   ThumbsUp,
   Eye,
   ChevronRight,
-  ChevronUp,
   Flame,
   Clock,
   Accessibility,
@@ -33,7 +31,6 @@ import {
   Newspaper,
   Briefcase,
   Bookmark,
-  Sparkles,
   GraduationCap,
   Gem,
 } from 'lucide-react';
@@ -55,7 +52,7 @@ const activities = [
     title: '배리어프리 캠퍼스 서포터즈 2기',
     deadline: 'D-3',
     deadlineLabel: '마감임박',
-    deadlineColor: '#B91C1C',
+    deadlineColor: '#D97706',
     deadlineIcon: AlertTriangle,
     category: '교내활동',
     typeIcon: GraduationCap,
@@ -64,8 +61,8 @@ const activities = [
   },
   {
     id: 2,
-    org: '서로플랫폼',
-    title: '동행 체험단 모집 (5월 정기)',
+    org: 'ONDA',
+    title: '정기 동행 모임 모집',
     deadline: 'D-7',
     deadlineLabel: '곧 마감',
     deadlineColor: '#B45309',
@@ -78,32 +75,21 @@ const activities = [
   {
     id: 3,
     org: '교내 창업동아리',
-    title: '포용적 디자인 해커톤',
+    title: '편한 캠퍼스 아이디어 모임',
     deadline: 'D-14',
     deadlineLabel: '여유',
     deadlineColor: '#047857',
     deadlineIcon: Calendar,
-    category: '공모전',
+    category: '캠페인',
     typeIcon: Gem,
     accessibility: ['자막', '온라인'],
     progress: 35,
   },
 ];
 
-const demoFlowSteps = [
-  '이동 유형 선택',
-  '오늘의 수업길 주의할 점 확인',
-  '빠른 길과 안전한 길 비교',
-  '수업길 보기로 지도 확인',
-  '동행 요청 티켓 확인',
-  '불편한 장소 제보',
-  'AI 분석 결과 확인',
-] as const;
-
 export default function HomePage() {
   const heroScrollRef = useRef<HTMLDivElement | null>(null);
   const [heroIndex, setHeroIndex] = useState(0);
-  const [demoGuideOpen, setDemoGuideOpen] = useState(false);
 
   const handleHeroScroll = () => {
     const el = heroScrollRef.current;
@@ -159,13 +145,14 @@ export default function HomePage() {
       <Box
         component="header"
         sx={{
-          background: 'linear-gradient(135deg, #1E3A8A 0%, #2542A3 100%)',
+          background: 'linear-gradient(135deg, #173B78 0%, #0F766E 100%)',
           color: '#fff',
           px: 2,
           pt: 3,
           pb: 4,
           borderBottomLeftRadius: '12px',
           borderBottomRightRadius: '12px',
+          boxShadow: '0 10px 24px rgba(15,23,42,0.12)',
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -208,7 +195,7 @@ export default function HomePage() {
             px: 2,
             py: 1.5,
             gap: 1.5,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            boxShadow: '0 4px 14px rgba(15,23,42,0.12)',
             minHeight: 48,
             '&:focus-visible': {
               outline: '3px solid #FBBF24',
@@ -224,117 +211,7 @@ export default function HomePage() {
       </Box>
 
       <Box sx={{ px: 2, mt: -2.5 }}>
-        <Card
-          component="section"
-          aria-labelledby="demo-flow-heading"
-          sx={{
-            mb: 1.5,
-            borderRadius: '12px',
-            border: '1px solid #DBEAFE',
-            boxShadow: '0 6px 18px rgba(15,23,42,0.10)',
-            overflow: 'hidden',
-          }}
-        >
-          <ButtonBase
-            onClick={() => setDemoGuideOpen((open) => !open)}
-            aria-expanded={demoGuideOpen}
-            aria-controls="demo-flow-content"
-            sx={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 1.5,
-              p: 2,
-              textAlign: 'left',
-              bgcolor: '#F8FAFC',
-              '&:focus-visible': {
-                outline: '3px solid #1E3A8A',
-                outlineOffset: -3,
-              },
-            }}
-          >
-            <Box sx={{ minWidth: 0 }}>
-              <Typography
-                id="demo-flow-heading"
-                component="h2"
-                sx={{ color: '#172554', fontSize: '1.125rem', fontWeight: 900 }}
-              >
-                발표 시연 흐름
-              </Typography>
-              <Typography sx={{ color: '#4B5563', fontSize: '0.875rem', mt: 0.25 }}>
-                공모전 발표에서는 아래 순서로 서비스를 시연할 수 있습니다.
-              </Typography>
-              <Typography sx={{ color: '#1E3A8A', fontSize: '0.8125rem', fontWeight: 800, mt: 0.5 }}>
-                천안시 대학가 이동약자·장애학생 안전 이동 데모
-              </Typography>
-            </Box>
-            <Box
-              aria-hidden="true"
-              sx={{
-                display: 'flex',
-                color: '#1E3A8A',
-                transform: demoGuideOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.2s ease',
-                flexShrink: 0,
-              }}
-            >
-              <ChevronUp size={22} />
-            </Box>
-          </ButtonBase>
-
-          <Collapse in={demoGuideOpen} timeout="auto" unmountOnExit>
-            <Box
-              id="demo-flow-content"
-              sx={{
-                px: 2,
-                pb: 2,
-                pt: 0.5,
-                bgcolor: '#fff',
-              }}
-            >
-              <Box sx={{ display: 'grid', gap: 0.75 }}>
-                {demoFlowSteps.map((step, index) => (
-                  <Box
-                    key={step}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1,
-                      minHeight: 40,
-                      p: 1,
-                      borderRadius: '10px',
-                      bgcolor: index % 2 === 0 ? '#EFF6FF' : '#F8FAFC',
-                      border: '1px solid #E5E7EB',
-                    }}
-                  >
-                    <Box
-                      aria-hidden="true"
-                      sx={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: '50%',
-                        bgcolor: '#1E3A8A',
-                        color: '#fff',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '0.8125rem',
-                        fontWeight: 900,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {index + 1}
-                    </Box>
-                    <Typography sx={{ color: '#111827', fontSize: '0.9375rem', fontWeight: 800 }}>
-                      {step}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-          </Collapse>
-        </Card>
+        <ScheduleRouteCard currentStartNodeId="1" />
 
         {/* 히어로 배너 - 함께하는 활동 광고 (풀폭) */}
         <Box
@@ -384,7 +261,7 @@ export default function HomePage() {
               >
                 <CardActionArea
                   aria-label={`${b.badge}, ${b.title.replace('\n', ' ')}, ${b.subtitle}`}
-                  sx={{ position: 'relative', minHeight: 280 }}
+                  sx={{ position: 'relative', minHeight: 210 }}
                 >
                   <Box sx={{ position: 'absolute', inset: 0 }} aria-hidden="true">
                     <ImageWithFallback
@@ -408,8 +285,8 @@ export default function HomePage() {
                     sx={{
                       position: 'relative',
                       px: 3,
-                      py: 4,
-                      maxWidth: '75%',
+                      py: 3,
+                      maxWidth: '82%',
                     }}
                   >
                     <Chip
@@ -497,9 +374,7 @@ export default function HomePage() {
           </Box>
         </Box>
 
-        <ScheduleRouteCard currentStartNodeId="1" />
-
-        {/* 인기 관심 분야 TOP 5 */}
+        {/* 많이 찾는 동행 */}
         <Box component="section" aria-labelledby="match-cat-heading" sx={{ mt: 0.5, mb: 2.5 }}>
           <Box
             sx={{
@@ -515,23 +390,20 @@ export default function HomePage() {
               component="h2"
               sx={{ fontWeight: 800, fontSize: '1.25rem', color: '#111827' }}
             >
-              인기 관심 분야{' '}
-              <Box component="span" sx={{ color: '#1E3A8A', fontWeight: 800 }}>
-                TOP 5
-              </Box>
+              많이 찾는 동행
             </Typography>
             <Button
               size="small"
               endIcon={<ChevronRight size={16} aria-hidden="true" />}
-              aria-label="인기 관심 분야 전체보기"
+              aria-label="많이 찾는 동행 전체 보기"
               sx={{ textTransform: 'none', color: '#4B5563', minHeight: 44 }}
             >
-              전체보기
+              전체 보기
             </Button>
           </Box>
           <Box
             role="list"
-            aria-label="인기 관심 분야 TOP 5 (좌우로 드래그 또는 스크롤)"
+            aria-label="많이 찾는 동행 목록 (좌우로 드래그 또는 스크롤)"
             onPointerDown={onCatPointerDown}
             onPointerMove={onCatPointerMove}
             onPointerUp={onCatPointerUp}
@@ -564,7 +436,7 @@ export default function HomePage() {
                   gap: 0.75,
                   flexShrink: 0,
                   scrollSnapAlign: 'start',
-                  borderRadius: '12px',
+                  borderRadius: '8px',
                   '&:focus-visible': {
                     outline: '3px solid #1E3A8A',
                     outlineOffset: 2,
@@ -606,7 +478,7 @@ export default function HomePage() {
           </Box>
         </Box>
 
-        {/* 마감 임박 활동 */}
+        {/* 곧 마감되는 활동 */}
         <Box component="section" aria-labelledby="activities-heading" sx={{ mb: 2 }}>
           <Box
             sx={{
@@ -624,21 +496,21 @@ export default function HomePage() {
                 component="h2"
                 sx={{ fontWeight: 700, fontSize: '1rem' }}
               >
-                마감 임박 활동
+                곧 마감되는 활동
               </Typography>
             </Box>
             <Button
               size="small"
               endIcon={<ChevronRight size={16} aria-hidden="true" />}
-              aria-label="마감 임박 활동 전체보기"
+              aria-label="곧 마감되는 활동 전체 보기"
               sx={{ textTransform: 'none', color: '#4B5563', minHeight: 44 }}
             >
-              전체보기
+              전체 보기
             </Button>
           </Box>
           <Box
             role="list"
-            aria-label="마감 임박 활동 목록 (좌우로 스크롤)"
+            aria-label="곧 마감되는 활동 목록 (좌우로 스크롤)"
             sx={{
               display: 'flex',
               gap: 1.5,
@@ -659,13 +531,13 @@ export default function HomePage() {
                   role="listitem"
                   sx={{
                     minWidth: 240,
-                    borderRadius: '12px',
+                    borderRadius: '8px',
                     scrollSnapAlign: 'start',
                     flexShrink: 0,
                   }}
                 >
                   <CardActionArea
-                    aria-label={`${a.deadlineLabel}, ${a.deadline}, ${a.category}, ${a.org}, ${a.title}, 모집률 ${a.progress}퍼센트, 접근 편의: ${a.accessibility.join(', ')}`}
+                    aria-label={`${a.deadlineLabel}, ${a.deadline}, ${a.category}, ${a.org}, ${a.title}, 신청 현황 ${a.progress}퍼센트, 이동 편의: ${a.accessibility.join(', ')}`}
                     sx={{ p: 2 }}
                   >
                     <Box
@@ -717,7 +589,7 @@ export default function HomePage() {
                     <Box sx={{ mb: 1 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                         <Typography sx={{ color: '#4B5563', fontSize: '0.75rem' }}>
-                          모집률
+                          신청 현황
                         </Typography>
                         <Typography sx={{ fontSize: '0.75rem', fontWeight: 600 }}>
                           {a.progress}%
@@ -726,7 +598,7 @@ export default function HomePage() {
                       <LinearProgress
                         variant="determinate"
                         value={a.progress}
-                        aria-label={`모집률 ${a.progress}퍼센트`}
+                        aria-label={`신청 현황 ${a.progress}퍼센트`}
                         sx={{
                           height: 6,
                           borderRadius: 3,
@@ -745,7 +617,7 @@ export default function HomePage() {
                     >
                       <Chip
                         icon={<Accessibility size={12} aria-hidden="true" />}
-                        label={`접근 편의: ${a.accessibility.join(', ')}`}
+                        label={`이동 편의: ${a.accessibility.join(', ')}`}
                         size="small"
                         sx={{
                           bgcolor: '#D1FAE5',
@@ -776,11 +648,11 @@ export default function HomePage() {
           </Box>
         </Box>
 
-        {/* 실시간 인기글 */}
+        {/* 요즘 많이 본 글 */}
         <Card
           component="section"
           aria-labelledby="hot-posts-heading"
-          sx={{ borderRadius: '12px', mb: 2 }}
+          sx={{ borderRadius: '8px', mb: 2 }}
         >
           <CardContent sx={{ p: 0 }}>
             <Box
@@ -794,22 +666,22 @@ export default function HomePage() {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                <Flame size={18} color="#B91C1C" aria-hidden="true" />
+                <Flame size={18} color="#D97706" aria-hidden="true" />
                 <Typography
                   id="hot-posts-heading"
                   component="h2"
                   sx={{ fontWeight: 700, fontSize: '1rem' }}
                 >
-                  실시간 인기글
+                  요즘 많이 본 글
                 </Typography>
               </Box>
               <Button
                 size="small"
                 endIcon={<ChevronRight size={16} aria-hidden="true" />}
-                aria-label="실시간 인기글 전체보기"
+                aria-label="요즘 많이 본 글 전체 보기"
                 sx={{ textTransform: 'none', color: '#4B5563', minHeight: 44 }}
               >
-                전체보기
+                전체 보기
               </Button>
             </Box>
             <Divider />
@@ -834,8 +706,8 @@ export default function HomePage() {
                             sx={{
                               height: 20,
                               fontSize: '0.75rem',
-                              bgcolor: '#FEE2E2',
-                              color: '#B91C1C',
+                              bgcolor: '#FFEDD5',
+                              color: '#C2410C',
                               fontWeight: 700,
                             }}
                           />
@@ -888,7 +760,7 @@ export default function HomePage() {
         <Card
           component="section"
           aria-labelledby="campus-news-heading"
-          sx={{ borderRadius: '12px', mb: 2 }}
+          sx={{ borderRadius: '8px', mb: 2 }}
         >
           <CardContent sx={{ p: 0 }}>
             <Box
@@ -914,10 +786,10 @@ export default function HomePage() {
               <Button
                 size="small"
                 endIcon={<ChevronRight size={16} aria-hidden="true" />}
-                aria-label="교내 소식 전체보기"
+                aria-label="교내 소식 전체 보기"
                 sx={{ textTransform: 'none', color: '#4B5563', minHeight: 44 }}
               >
-                전체보기
+                전체 보기
               </Button>
             </Box>
             <Divider />
@@ -978,11 +850,11 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
-        {/* 대외활동 */}
+        {/* 교외 활동 */}
         <Card
           component="section"
           aria-labelledby="external-heading"
-          sx={{ borderRadius: '12px' }}
+          sx={{ borderRadius: '8px' }}
         >
           <CardContent sx={{ p: 0 }}>
             <Box
@@ -1002,20 +874,20 @@ export default function HomePage() {
                   component="h2"
                   sx={{ fontWeight: 700, fontSize: '1rem' }}
                 >
-                  대외활동
+                  교외 활동
                 </Typography>
               </Box>
               <Button
                 size="small"
                 endIcon={<ChevronRight size={16} aria-hidden="true" />}
-                aria-label="대외활동 전체보기"
+                aria-label="교외 활동 전체 보기"
                 sx={{ textTransform: 'none', color: '#4B5563', minHeight: 44 }}
               >
-                전체보기
+                전체 보기
               </Button>
             </Box>
             <Divider />
-            <List sx={{ p: 0 }} aria-label="대외활동 목록">
+            <List sx={{ p: 0 }} aria-label="교외 활동 목록">
               {externalActivities.map((e, idx) => (
                 <Box key={e.id}>
                   <ListItemButton

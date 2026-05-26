@@ -21,7 +21,7 @@ export default function Layout({ children, onSosClick }: LayoutProps) {
   const activeTab = tabs.find((t) => location.pathname.startsWith(t.value))?.value ?? '/home';
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-[#F8FAFC] overflow-hidden">
+    <div className="h-[100dvh] flex flex-col bg-[#F5F8F6] overflow-hidden">
       <main className="flex-1 overflow-y-auto overscroll-contain relative">
         {children}
 
@@ -41,12 +41,12 @@ export default function Layout({ children, onSosClick }: LayoutProps) {
             onClick={onSosClick}
             aria-label="긴급 도움 호출"
             sx={{
-              bgcolor: '#B91C1C',
+              bgcolor: '#B42318',
               color: '#fff',
               pointerEvents: 'auto',
               width: 64,
               height: 64,
-              boxShadow: '0 6px 16px rgba(185,28,28,0.45)',
+              boxShadow: '0 8px 18px rgba(180,35,24,0.36)',
               '&:hover': { bgcolor: '#991B1B' },
             }}
           >
@@ -70,7 +70,7 @@ export default function Layout({ children, onSosClick }: LayoutProps) {
           zIndex: (t) => t.zIndex.appBar,
           paddingBottom: 'env(safe-area-inset-bottom)',
           borderTop: '1px solid #E5E7EB',
-          boxShadow: '0 -2px 10px rgba(15,23,42,0.05)',
+          boxShadow: '0 -6px 18px rgba(15,23,42,0.06)',
         }}
         elevation={0}
       >

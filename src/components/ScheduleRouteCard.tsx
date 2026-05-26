@@ -17,10 +17,12 @@ import {
   CalendarDays,
   HandHeart,
   MapPin,
+  Megaphone,
   Navigation,
   ShieldCheck,
 } from 'lucide-react';
 
+import AccessibilityReportDialog from './AccessibilityReportDialog';
 import CompanionTicketDialog from './CompanionTicketDialog';
 import { facilities } from '../data/mockData';
 import { sampleCourseSchedules } from '../data/sampleSchedules';
@@ -42,8 +44,28 @@ const DEMO_NOW = new Date(2026, 4, 21, 9, 20);
 const difficultyColor: Record<ScheduleDifficultyLabel, string> = {
   '편하게 이동 가능': '#047857',
   '조금 주의 필요': '#B45309',
-  '주의해서 이동': '#B91C1C',
+  '주의해서 이동': '#D97706',
 };
+
+const routeComparisonOptions = [
+  {
+    title: '빠른 길',
+    minutes: '8분',
+    note: '계단과 경사 구간이 있어요',
+    color: '#1E3A8A',
+    bg: '#EFF6FF',
+    border: '#BFDBFE',
+  },
+  {
+    title: '안전한 길',
+    minutes: '11분',
+    note: '계단과 급경사를 피해요',
+    color: '#047857',
+    bg: '#ECFDF5',
+    border: '#A7F3D0',
+    badge: '추천',
+  },
+] as const;
 
 export default function ScheduleRouteCard({
   currentStartNodeId,
@@ -52,6 +74,7 @@ export default function ScheduleRouteCard({
   const navigate = useNavigate();
   const [routeNotice, setRouteNotice] = useState('');
   const [companionOpen, setCompanionOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const now = useMemo(() => DEMO_NOW, []);
 
   const todaySchedules = useMemo(
@@ -100,13 +123,13 @@ export default function ScheduleRouteCard({
 
   const handleShowRoute = () => {
     if (!recommendation) {
-      setRouteNotice('오늘 남은 수업이 없어 수업길을 만들 수 없습니다.');
+      setRouteNotice('오늘 남은 수업이 없어 이동 안내를 만들 수 없어요.');
       return;
     }
 
     if (onSelectRoute) {
       onSelectRoute(recommendation.startNodeId, recommendation.destinationNodeId);
-      setRouteNotice('선택한 수업길을 지도에 보낼 준비를 했습니다.');
+      setRouteNotice('지도에서 수업길을 확인할 수 있어요.');
       return;
     }
 
@@ -122,25 +145,26 @@ export default function ScheduleRouteCard({
       component="section"
       aria-labelledby="today-schedule-route-heading"
       sx={{
-        borderRadius: '12px',
+        borderRadius: '8px',
         mb: 2,
-        border: '1px solid #BBF7D0',
-        bgcolor: '#F8FFFB',
+        border: '1px solid #CDEBDD',
+        bgcolor: '#FBFEFC',
+        boxShadow: '0 8px 24px rgba(15,23,42,0.06)',
       }}
     >
-      <CardContent sx={{ p: 2.5 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+      <CardContent sx={{ p: 2.25 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mb: 1.5 }}>
           <CalendarDays size={22} color="#047857" aria-hidden="true" />
           <Box>
             <Typography
               id="today-schedule-route-heading"
               component="h2"
-              sx={{ fontWeight: 800, fontSize: '1.25rem', color: '#064E3B' }}
+              sx={{ fontWeight: 900, fontSize: '1.375rem', color: '#064E3B' }}
             >
-              오늘의 AI 수업길
+              오늘의 이동
             </Typography>
             <Typography sx={{ color: '#4B5563', fontSize: '0.9375rem', mt: 0.25 }}>
-              천안시 대학가 이동약자·장애학생을 위한 안전한 통학·수업길을 미리 확인해요.
+              다음 장소까지 안전하게 이동할 수 있도록 미리 확인해요.
             </Typography>
           </Box>
         </Box>
@@ -152,24 +176,24 @@ export default function ScheduleRouteCard({
             gap: 1,
             p: 1.25,
             mb: 1.5,
-            borderRadius: '10px',
+            borderRadius: '8px',
             bgcolor: '#ECFDF5',
-            border: '1px solid #BBF7D0',
+            border: '1px solid #CDEBDD',
           }}
         >
           <MapPin size={18} color="#047857" aria-hidden="true" />
           <Typography sx={{ color: '#065F46', fontSize: '0.9375rem', fontWeight: 700 }}>
-            현재 출발지: {startLocation?.name ?? '기본 위치'}
+            현재 출발지: {startLocation?.name ?? '현재 위치'}
           </Typography>
         </Box>
 
-        <Card sx={{ borderRadius: '12px', boxShadow: 'none', mb: 1.5 }}>
+        <Card sx={{ borderRadius: '8px', boxShadow: 'none', mb: 1.5, borderColor: '#E2E8F0' }}>
           <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
             <Typography sx={{ fontSize: '1rem', fontWeight: 800, mb: 1 }}>
-              오늘 수업 목록
+              오늘 일정
             </Typography>
             {todaySchedules.length === 0 ? (
-              <Alert severity="info" sx={{ borderRadius: '10px' }}>
+              <Alert severity="info" sx={{ borderRadius: '8px' }}>
                 오늘 수업이 없습니다.
               </Alert>
             ) : (
@@ -181,13 +205,13 @@ export default function ScheduleRouteCard({
                       <ListItemButton
                         selected={isNext}
                         sx={{
-                          borderRadius: '10px',
+                          borderRadius: '8px',
                           alignItems: 'flex-start',
                           gap: 1,
                           px: 1.25,
                           py: 1.25,
                           bgcolor: isNext ? '#ECFDF5' : 'transparent',
-                          border: isNext ? '2px solid #34D399' : '1px solid transparent',
+                          border: isNext ? '2px solid #A7F3D0' : '1px solid transparent',
                         }}
                       >
                         <Box sx={{ flex: 1 }}>
@@ -226,7 +250,7 @@ export default function ScheduleRouteCard({
         </Card>
 
         {recommendation ? (
-          <Card sx={{ borderRadius: '12px', boxShadow: 'none', border: '1px solid #D1FAE5' }}>
+          <Card sx={{ borderRadius: '8px', boxShadow: 'none', border: '1px solid #D1FAE5' }}>
             <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.25, mb: 1.5 }}>
                 <Box
@@ -234,7 +258,7 @@ export default function ScheduleRouteCard({
                   sx={{
                     width: 44,
                     height: 44,
-                    borderRadius: '12px',
+                    borderRadius: '8px',
                     bgcolor: '#EEF2FF',
                     display: 'flex',
                     alignItems: 'center',
@@ -246,10 +270,10 @@ export default function ScheduleRouteCard({
                 </Box>
                 <Box sx={{ flex: 1 }}>
                   <Typography sx={{ color: '#4B5563', fontSize: '0.875rem', fontWeight: 700 }}>
-                    AI 위험 예측
+                    이동 안내
                   </Typography>
                   <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, mt: 0.25 }}>
-                    오늘 {formatMinutes(recommendation.course.startMinutes)} 수업 이동은 {difficulty}예요.
+                    오늘 {formatMinutes(recommendation.course.startMinutes)} 수업까지 {difficulty}예요.
                   </Typography>
                   <Typography sx={{ color: '#374151', fontSize: '1rem', mt: 0.5 }}>
                     {recommendation.course.courseName} · {recommendation.course.locationName} {recommendation.course.roomName}
@@ -273,9 +297,63 @@ export default function ScheduleRouteCard({
               </Box>
 
               <Box
+                component="section"
+                aria-label="빠른 길과 안전한 길 비교"
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                  gap: 1,
+                  mb: 1.5,
+                }}
+              >
+                {routeComparisonOptions.map((option) => (
+                  <Box
+                    key={option.title}
+                    sx={{
+                      p: 1.5,
+                      borderRadius: '8px',
+                      bgcolor: option.bg,
+                      border: `1px solid ${option.border}`,
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                      <Typography
+                        sx={{
+                          color: option.color,
+                          fontSize: '0.875rem',
+                          fontWeight: 900,
+                        }}
+                      >
+                        {option.title}
+                      </Typography>
+                      {'badge' in option && option.badge && (
+                        <Chip
+                          label={option.badge}
+                          size="small"
+                          sx={{
+                            bgcolor: option.color,
+                            color: '#fff',
+                            height: 20,
+                            fontSize: '0.6875rem',
+                            fontWeight: 800,
+                          }}
+                        />
+                      )}
+                    </Box>
+                    <Typography sx={{ color: '#111827', fontSize: '1.25rem', fontWeight: 900 }}>
+                      {option.minutes}
+                    </Typography>
+                    <Typography sx={{ color: '#374151', fontSize: '0.8125rem', mt: 0.25 }}>
+                      {option.note}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+
+              <Box
                 sx={{
                   p: 1.5,
-                  borderRadius: '10px',
+                  borderRadius: '8px',
                   bgcolor: `${difficultyColor[difficulty]}12`,
                   border: `1px solid ${difficultyColor[difficulty]}33`,
                   mb: 1.5,
@@ -327,18 +405,24 @@ export default function ScheduleRouteCard({
               <Alert
                 icon={<AlertTriangle size={18} />}
                 severity="info"
-                sx={{ borderRadius: '10px', mb: 1.5, bgcolor: '#EEF2FF', color: '#172554' }}
+                sx={{ borderRadius: '8px', mb: 1.5, bgcolor: '#F0F7F4', color: '#064E3B' }}
               >
-                AI 위험 예측이 기상 공공데이터와 학생 제보 데이터를 함께 보고 정문 우회 경로를 추천해요.
+                안전한 길을 추천했어요. 날씨와 제보 정보를 함께 확인해 주의할 구간을 알려드려요.
               </Alert>
 
               {routeNotice && (
-                <Alert severity="success" sx={{ borderRadius: '10px', mb: 1.5 }}>
+                <Alert severity="success" sx={{ borderRadius: '8px', mb: 1.5 }}>
                   {routeNotice}
                 </Alert>
               )}
 
-              <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+                  gap: 1,
+                }}
+              >
                 <Button
                   fullWidth
                   variant="contained"
@@ -346,7 +430,7 @@ export default function ScheduleRouteCard({
                   onClick={handleShowRoute}
                   sx={{
                     minHeight: 52,
-                    borderRadius: '12px',
+                    borderRadius: '8px',
                     bgcolor: '#1E3A8A',
                     boxShadow: 'none',
                     textTransform: 'none',
@@ -358,26 +442,44 @@ export default function ScheduleRouteCard({
                 </Button>
                 <Button
                   fullWidth
-                  variant="outlined"
+                  variant="contained"
                   startIcon={<HandHeart size={18} aria-hidden="true" />}
                   onClick={() => setCompanionOpen(true)}
                   sx={{
                     minHeight: 52,
-                    borderRadius: '12px',
-                    borderColor: '#047857',
-                    color: '#047857',
+                    borderRadius: '8px',
+                    bgcolor: '#047857',
+                    color: '#fff',
                     textTransform: 'none',
                     fontSize: '1rem',
-                    '&:hover': { bgcolor: '#ECFDF5', borderColor: '#065F46' },
+                    '&:hover': { bgcolor: '#065F46' },
                   }}
                 >
                   동행 요청
+                </Button>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<Megaphone size={18} aria-hidden="true" />}
+                  onClick={() => setReportOpen(true)}
+                  sx={{
+                    gridColumn: { xs: '1 / -1', sm: 'auto' },
+                    minHeight: 52,
+                    borderRadius: '8px',
+                    borderColor: '#CBD5E1',
+                    color: '#334155',
+                    textTransform: 'none',
+                    fontSize: '1rem',
+                    '&:hover': { bgcolor: '#F8FAFC', borderColor: '#94A3B8' },
+                  }}
+                >
+                  제보하기
                 </Button>
               </Box>
             </CardContent>
           </Card>
         ) : (
-          <Alert severity="success" sx={{ borderRadius: '10px' }}>
+          <Alert severity="success" sx={{ borderRadius: '8px' }}>
             오늘 남은 수업이 없습니다.
           </Alert>
         )}
@@ -388,6 +490,11 @@ export default function ScheduleRouteCard({
         onClose={() => setCompanionOpen(false)}
         routeRequest={routeRequest}
       />
+      <AccessibilityReportDialog
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        defaultPlaceName={destinationLocation?.name ?? ''}
+      />
     </Card>
   );
 }
@@ -397,7 +504,7 @@ function InfoTile({ label, value }: { label: string; value: string }) {
     <Box
       sx={{
         p: 1.5,
-        borderRadius: '10px',
+        borderRadius: '8px',
         bgcolor: '#F8FAFC',
         border: '1px solid #E5E7EB',
       }}

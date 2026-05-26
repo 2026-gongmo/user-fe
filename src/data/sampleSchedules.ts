@@ -2,8 +2,8 @@ import type { CourseSchedule } from '../types/schedule';
 
 export const sampleCourseSchedules: CourseSchedule[] = [
   {
-    id: 'course-inclusive-ai-thu',
-    courseName: 'AI 서비스 기획',
+    id: 'course-inclusive-service-thu',
+    courseName: '서비스 기획',
     dayOfWeek: 4,
     startMinutes: 600,
     endMinutes: 690,

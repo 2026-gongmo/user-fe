@@ -57,7 +57,7 @@ import {
   certificates,
 } from '../data/mockData';
 
-// 아이콘 ref 가 들어가는 UI 카탈로그는 컴포넌트 내부 유지
+// 아이콘 참조가 들어가는 화면 표시 항목은 컴포넌트 내부 유지
 const accessNeeds = [
   { id: 'mobility', icon: MoveVertical, label: '이동 보조', selected: true },
   { id: 'vision', icon: Eye, label: '시각 안내', selected: false },
@@ -89,10 +89,10 @@ export default function ProfilePage() {
       <Box sx={{ pt: 2, mb: 2, display: 'flex', alignItems: 'flex-start', gap: 1 }}>
         <Box sx={{ flex: 1 }}>
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
-            내 프로필
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            매칭과 활동에 쓰이는 정보를 관리하세요
+          내 프로필
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+            동행과 알림에 필요한 정보를 관리하세요
           </Typography>
         </Box>
         <IconButton
@@ -107,7 +107,7 @@ export default function ProfilePage() {
         icon={<ShieldCheck size={20} />}
         severity="info"
         sx={{
-          borderRadius: '12px',
+          borderRadius: '8px',
           bgcolor: '#EEF2FF',
           color: '#172554',
           mb: 2,
@@ -115,15 +115,15 @@ export default function ProfilePage() {
         }}
       >
         <Typography variant="body2" sx={{ fontWeight: 600 }}>
-          프로필 공개 범위가 보호됩니다
+          내 정보는 필요한 만큼만 보여요
         </Typography>
         <Typography variant="caption">
-          매칭 상대에게는 필요한 정보만 요약해서 보여줍니다
+          동행이 확정된 사람에게만 필요한 정보가 보여요
         </Typography>
       </Alert>
 
         {/* 프로필 카드 */}
-        <Card sx={{ borderRadius: '12px', boxShadow: 'none' }}>
+        <Card sx={{ borderRadius: '8px', boxShadow: '0 1px 2px rgba(15,23,42,0.04)' }}>
           <CardContent sx={{ p: 2.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
               <Avatar
@@ -181,7 +181,7 @@ export default function ProfilePage() {
               <Chip
                 role="listitem"
                 icon={<ShieldCheck size={14} aria-hidden="true" />}
-                label="학교 협약(MOU)"
+                label="학교 연계 확인"
                 size="small"
                 sx={{
                   bgcolor: '#EEF2FF',
@@ -218,7 +218,7 @@ export default function ProfilePage() {
               startIcon={<Edit size={16} aria-hidden="true" />}
               onClick={() => setProfileEditOpen(true)}
               sx={{
-                borderRadius: '10px',
+                borderRadius: '8px',
                 textTransform: 'none',
                 minHeight: 44,
                 borderColor: '#D1D5DB',
@@ -230,12 +230,12 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* 봉사시간/활동확인서 카드 (비장애학생 인센티브) */}
+        {/* 봉사시간/활동확인서 카드 */}
         <Card
           component="section"
           aria-labelledby="volunteer-heading"
           sx={{
-            borderRadius: '12px',
+            borderRadius: '8px',
             mt: 2,
             boxShadow: 'none',
           }}
@@ -273,19 +273,19 @@ export default function ProfilePage() {
                 mb: 1.5,
               }}
             >
-              <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '10px', py: 1.25 }}>
+              <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '8px', py: 1.25 }}>
                 <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#047857' }}>
                   {volunteerStats.totalHours}h
                 </Typography>
                 <Typography sx={{ fontSize: '0.7rem', color: '#065F46' }}>누적 시간</Typography>
               </Box>
-              <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '10px', py: 1.25 }}>
+              <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '8px', py: 1.25 }}>
                 <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#047857' }}>
                   {volunteerStats.activities}
                 </Typography>
                 <Typography sx={{ fontSize: '0.7rem', color: '#065F46' }}>참여 활동</Typography>
               </Box>
-              <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '10px', py: 1.25 }}>
+              <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '8px', py: 1.25 }}>
                 <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#047857' }}>
                   {volunteerStats.certificates}
                 </Typography>
@@ -324,7 +324,7 @@ export default function ProfilePage() {
                 sx={{
                   bgcolor: '#047857',
                   color: '#fff',
-                  borderRadius: '10px',
+                  borderRadius: '8px',
                   textTransform: 'none',
                   minHeight: 44,
                   boxShadow: 'none',
@@ -339,7 +339,7 @@ export default function ProfilePage() {
                 variant="outlined"
                 startIcon={<GraduationCap size={16} aria-hidden="true" />}
                 sx={{
-                  borderRadius: '10px',
+                  borderRadius: '8px',
                   textTransform: 'none',
                   minHeight: 44,
                   borderColor: '#047857',
@@ -353,11 +353,11 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* 접근 프로파일 카드 */}
+        {/* 이동 도움 정보 카드 */}
         <Card
           component="section"
           aria-labelledby="access-heading"
-          sx={{ borderRadius: '12px', mt: 2 }}
+          sx={{ borderRadius: '8px', mt: 2 }}
         >
           <CardContent sx={{ p: 2.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
@@ -368,7 +368,7 @@ export default function ProfilePage() {
                   component="h2"
                   sx={{ fontWeight: 700, fontSize: '1rem' }}
                 >
-                  접근 프로파일
+                  이동 도움 정보
                 </Typography>
               </Box>
               <Button
@@ -381,7 +381,7 @@ export default function ProfilePage() {
             </Box>
 
             <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', mb: 1 }}>
-              필요한 도움 (이용자 입력)
+              도움이 필요한 상황
             </Typography>
             <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mb: 2 }}>
               {accessNeeds.map((n) => {
@@ -407,7 +407,7 @@ export default function ProfilePage() {
             </Box>
 
             <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', mb: 1 }}>
-              제공 가능한 도움 (제공자 입력)
+              내가 도울 수 있는 일
             </Typography>
             <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
               {offerSkills.map((s) => (
@@ -434,7 +434,7 @@ export default function ProfilePage() {
                 mt: 2,
                 p: 1.5,
                 bgcolor: '#F9FAFB',
-                borderRadius: '10px',
+                borderRadius: '8px',
                 display: 'flex',
                 gap: 1,
                 alignItems: 'flex-start',
@@ -442,14 +442,14 @@ export default function ProfilePage() {
             >
               <Sparkles size={16} color="#1E3A8A" aria-hidden="true" />
               <Typography sx={{ fontSize: '0.75rem', color: '#4B5563', lineHeight: 1.5 }}>
-                입력한 프로파일은 매칭 추천에 활용됩니다. 매칭 상대에게는 일부 정보만 비공개·요약 형태로 노출됩니다.
+                선택한 정보는 더 잘 맞는 동행을 찾는 데 사용됩니다. 자세한 내용은 필요한 경우에만 보여요.
               </Typography>
             </Box>
           </CardContent>
         </Card>
 
         {/* 친구 카드 */}
-        <Card component="section" aria-labelledby="friends-heading" sx={{ borderRadius: '12px', mt: 2 }}>
+        <Card component="section" aria-labelledby="friends-heading" sx={{ borderRadius: '8px', mt: 2 }}>
           <CardContent sx={{ p: 0 }}>
             <Box
               sx={{
@@ -520,7 +520,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* 설정 메뉴 카드 */}
-        <Card sx={{ borderRadius: '12px', mt: 2 }}>
+        <Card sx={{ borderRadius: '8px', mt: 2 }}>
           <CardContent sx={{ p: 0 }}>
             <MenuRow
               icon={<Accessibility size={20} color="#1E3A8A" aria-hidden="true" />}
@@ -544,7 +544,7 @@ export default function ProfilePage() {
             <MenuRow
               icon={<MessageCircle size={20} color="#15803D" aria-hidden="true" />}
               label="문의/신고"
-              sub="베프 운영팀에 문의"
+              sub="ONDA 운영팀에 문의"
             />
             <Divider />
             <MenuRow
@@ -556,7 +556,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* 빠른 알림 토글 */}
-        <Card sx={{ borderRadius: '12px', mt: 2 }}>
+        <Card sx={{ borderRadius: '8px', mt: 2 }}>
           <CardContent sx={{ px: 2.5, py: 1 }}>
             <ToggleRow label="새로운 활동 알림" defaultChecked />
             <Divider />
@@ -572,14 +572,14 @@ export default function ProfilePage() {
           startIcon={<LogOut size={18} aria-hidden="true" />}
           sx={{
             mt: 2,
-            borderRadius: '10px',
+            borderRadius: '8px',
             textTransform: 'none',
-            color: '#B91C1C',
-            borderColor: '#FCA5A5',
+            color: '#B42318',
+            borderColor: '#FECACA',
             minHeight: 48,
             '&:hover': {
-              borderColor: '#B91C1C',
-              bgcolor: '#FEE2E2',
+              borderColor: '#B42318',
+              bgcolor: '#FFF1F2',
             },
           }}
         >
@@ -606,7 +606,7 @@ export default function ProfilePage() {
           <TextField label="자기소개" defaultValue={userProfile.bio} multiline rows={3} fullWidth />
           <Box>
             <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, mb: 1 }}>
-              필요한 도움 (이용자 모드 입력)
+              도움이 필요한 상황
             </Typography>
             <FormGroup row>
               {accessNeeds.map((n) => (
@@ -620,7 +620,7 @@ export default function ProfilePage() {
           </Box>
           <Box>
             <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, mb: 1 }}>
-              제공 가능한 도움 (제공자 모드 입력)
+              내가 도울 수 있는 일
             </Typography>
             <FormGroup row>
               {offerSkills.map((s) => (
@@ -669,7 +669,7 @@ export default function ProfilePage() {
             <Card
               key={c.id}
               sx={{
-                borderRadius: '12px',
+                borderRadius: '8px',
                 mb: 1.25,
                 border: '1px solid #E5E7EB',
                 boxShadow: 'none',
@@ -682,7 +682,7 @@ export default function ProfilePage() {
                     sx={{
                       width: 40,
                       height: 40,
-                      borderRadius: '10px',
+                      borderRadius: '8px',
                       bgcolor: '#EEF2FF',
                       display: 'flex',
                       alignItems: 'center',
@@ -811,7 +811,7 @@ function MenuRow({
         sx={{
           width: 40,
           height: 40,
-          borderRadius: '10px',
+          borderRadius: '8px',
           bgcolor: '#F3F4F6',
           display: 'flex',
           alignItems: 'center',

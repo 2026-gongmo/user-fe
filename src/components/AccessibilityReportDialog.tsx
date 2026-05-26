@@ -65,7 +65,7 @@ const problemTypes: ReportProblemType[] = [
 const urgencyColor: Record<Urgency, string> = {
   낮음: '#047857',
   보통: '#B45309',
-  높음: '#B91C1C',
+  높음: '#D97706',
 };
 
 export default function AccessibilityReportDialog({
@@ -85,8 +85,8 @@ export default function AccessibilityReportDialog({
   const canAnalyze = placeName.trim().length > 0 && description.trim().length > 0;
 
   const helperText = useMemo(() => {
-    if (canAnalyze) return '입력한 내용을 바탕으로 데모 분석 결과를 보여드려요.';
-    return '장소와 설명을 입력하면 AI 분석 결과 카드가 나타나요.';
+    if (canAnalyze) return '입력한 내용을 바탕으로 제보 내용을 정리할 수 있어요.';
+    return '장소와 설명을 입력하면 제보 내용을 자동으로 정리해드려요.';
   }, [canAnalyze]);
 
   const handleAnalyze = () => {
@@ -105,11 +105,11 @@ export default function AccessibilityReportDialog({
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle sx={{ fontWeight: 800, pb: 1, fontSize: '1.25rem' }}>
-        불편한 장소 제보
+        불편한 곳 알려주기
       </DialogTitle>
       <DialogContent sx={{ pt: 1 }}>
-        <Alert severity="info" sx={{ borderRadius: '10px', mb: 2 }}>
-          천안시 대학가와 캠퍼스에서 이동약자·장애학생이 겪는 불편을 제보 데이터로 정리하는 데모 화면입니다.
+        <Alert severity="info" sx={{ borderRadius: '8px', mb: 2 }}>
+          불편한 길이나 장소를 알려주면 이동 안내와 개선 요청에 참고할 수 있게 정리합니다.
         </Alert>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -149,7 +149,7 @@ export default function AccessibilityReportDialog({
             sx={{
               minHeight: 48,
               justifyContent: 'flex-start',
-              borderRadius: '10px',
+              borderRadius: '8px',
               borderColor: '#CBD5E1',
               color: '#334155',
               textTransform: 'none',
@@ -158,10 +158,10 @@ export default function AccessibilityReportDialog({
             사진 첨부하기
           </Button>
           <Typography sx={{ color: '#6B7280', fontSize: '0.8125rem', mt: -0.75 }}>
-            발표용 UI입니다. 실제 사진 업로드는 하지 않습니다.
+            사진 첨부는 현재 안내 기능으로 제공됩니다.
           </Typography>
 
-          <Alert severity={canAnalyze ? 'success' : 'warning'} sx={{ borderRadius: '10px' }}>
+          <Alert severity={canAnalyze ? 'success' : 'warning'} sx={{ borderRadius: '8px' }}>
             {helperText}
           </Alert>
 
@@ -180,13 +180,13 @@ export default function AccessibilityReportDialog({
           sx={{
             minHeight: 48,
             bgcolor: '#1E3A8A',
-            borderRadius: '10px',
+            borderRadius: '8px',
             boxShadow: 'none',
             textTransform: 'none',
             '&:hover': { bgcolor: '#172554' },
           }}
         >
-          AI 분석하기
+          제보 내용 정리하기
         </Button>
       </DialogActions>
     </Dialog>
@@ -197,9 +197,9 @@ function AnalysisResultCard({ analysis }: { analysis: ReportAnalysis }) {
   return (
     <Card
       sx={{
-        borderRadius: '12px',
+        borderRadius: '8px',
         border: '1px solid #BBF7D0',
-        bgcolor: '#F8FFFB',
+        bgcolor: '#FBFEFC',
         boxShadow: 'none',
       }}
     >
@@ -210,7 +210,7 @@ function AnalysisResultCard({ analysis }: { analysis: ReportAnalysis }) {
             sx={{
               width: 42,
               height: 42,
-              borderRadius: '10px',
+              borderRadius: '8px',
               bgcolor: '#D1FAE5',
               display: 'flex',
               alignItems: 'center',
@@ -222,10 +222,10 @@ function AnalysisResultCard({ analysis }: { analysis: ReportAnalysis }) {
           </Box>
           <Box>
             <Typography sx={{ color: '#047857', fontSize: '0.8125rem', fontWeight: 800 }}>
-              AI 분석 결과
+              제보 정리 결과
             </Typography>
             <Typography sx={{ color: '#111827', fontSize: '1.125rem', fontWeight: 800 }}>
-              제보 데이터가 개선 우선순위로 정리되었습니다.
+              주의할 점과 개선 제안을 정리했어요.
             </Typography>
           </Box>
         </Box>
@@ -259,9 +259,9 @@ function AnalysisResultCard({ analysis }: { analysis: ReportAnalysis }) {
         <Alert
           icon={<Database size={18} aria-hidden="true" />}
           severity="success"
-          sx={{ borderRadius: '10px', mt: 1.75 }}
+          sx={{ borderRadius: '8px', mt: 1.75 }}
         >
-          반복 제보 데이터가 쌓이면 학교와 천안시의 개선 우선순위 판단에 활용됩니다.
+          비슷한 제보가 쌓이면 학교와 지역의 개선 우선순위 판단에 활용됩니다.
         </Alert>
       </CardContent>
     </Card>
@@ -334,7 +334,7 @@ function createMockAnalysis(
   return {
     placeName: trimmedPlace,
     problemType,
-    affectedGroups: ['이동약자', '고령자'],
+    affectedGroups: ['이동에 도움이 필요한 사람', '고령자'],
     urgency: '낮음',
     suggestion: '현장 확인 후 접근 가능 안내 표지를 보완해요.',
     repeatReports: 3,

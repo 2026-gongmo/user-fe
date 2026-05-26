@@ -4,18 +4,18 @@
   --primary: #1E3A8A;
   --primary-50: #EEF2FF;
   --primary-100: #E0E7FF;
-  --secondary: #16A34A;
+  --secondary: #059669;
   --secondary-50: #ECFDF5;
-  --warning: #F59E0B;
+  --warning: #D97706;
   --warning-50: #FFFBEB;
-  --danger: #DC2626;
-  --danger-50: #FEF2F2;
-  --bg: #F8FAFC;
+  --danger: #B42318;
+  --danger-50: #FFF1F2;
+  --bg: #F5F8F6;
   --surface: #FFFFFF;
   --text: #111827;
   --sub: #6B7280;
-  --line: #E5E7EB;
-  --line-soft: #EEF1F4;
+  --line: #E2E8F0;
+  --line-soft: #EDF2F0;
 }
 
 html, body {
@@ -26,7 +26,7 @@ html, body {
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 #root {
@@ -36,4 +36,5 @@ html, body {
 /* 한국어 가독성을 위한 word-break */
 body, p, span, h1, h2, h3, h4, h5, h6 {
   word-break: keep-all;
+  letter-spacing: 0;
 }

@@ -136,10 +136,10 @@ const routeComparisonOptions = [
     title: '빠른 길',
     minutes: '8분',
     caution: '계단 1곳, 급경사 1곳',
-    description: '빠르지만 이동약자에게는 불편할 수 있어요.',
+    description: '빠르지만 이동이 불편할 수 있어요.',
     color: '#1E3A8A',
-    bg: '#EFF6FF',
-    border: '#BFDBFE',
+    bg: '#F8FAFC',
+    border: '#CBD5E1',
     badge: '',
   },
   {
@@ -156,11 +156,11 @@ const routeComparisonOptions = [
 ] as const;
 
 const publicDataSources = [
-  '천안시 버스정류장 정보',
-  '기상청 단기예보',
-  '교통약자 이동지원센터 정보',
-  '장애인 편의시설 정보',
-  '천안시 교통시설 데이터',
+  '주변 정류장 정보',
+  '오늘 날씨 정보',
+  '이동지원 정보',
+  '편의시설 정보',
+  '보행 안전 정보',
 ] as const;
 
 const getExpandedPx = () =>
@@ -283,7 +283,7 @@ export default function MapPage() {
           clip: 'rect(0 0 0 0)',
         }}
       >
-        천안시 대학가 배리어프리 지도
+        캠퍼스 편한 이동 지도
       </Typography>
 
       {/* 풀스크린 지도 배경 */}
@@ -359,7 +359,7 @@ export default function MapPage() {
               key={loc.id}
               onClick={() => setSelected(loc)}
               aria-label={`${categoryLabel(loc.category)}, ${loc.name}, ${loc.building}, 거리 ${loc.distance}${
-                loc.accessible ? ', 접근 가능' : ''
+                loc.accessible ? ', 이동 편의 확인됨' : ''
               }`}
               aria-pressed={isSelected}
               sx={{
@@ -547,9 +547,9 @@ export default function MapPage() {
             left: 12,
             right: 12,
             zIndex: 18,
-            borderRadius: '12px',
+            borderRadius: '8px',
             border: '1px solid #BFDBFE',
-            boxShadow: '0 8px 20px rgba(15,23,42,0.14)',
+            boxShadow: '0 10px 28px rgba(15,23,42,0.10)',
             maxHeight: 'calc(100% - 208px)',
             overflowY: 'auto',
           }}
@@ -561,7 +561,7 @@ export default function MapPage() {
                 sx={{
                   width: 42,
                   height: 42,
-                  borderRadius: '10px',
+                  borderRadius: '8px',
                   bgcolor: '#EEF2FF',
                   display: 'flex',
                   alignItems: 'center',
@@ -615,28 +615,28 @@ export default function MapPage() {
 
             <Alert
               severity="info"
-              sx={{ borderRadius: '10px', mb: 1.25, bgcolor: '#ECFDF5', color: '#065F46' }}
+              sx={{ borderRadius: '8px', mb: 1.25, bgcolor: '#F0F7F4', color: '#064E3B' }}
             >
-              AI 위험 예측은 천안시 공공데이터와 제보 데이터를 함께 반영해요. 주의할 구간은 노란 마커로 확인할 수 있어요.
+              날씨와 제보 정보를 함께 확인해 주의할 구간을 알려드려요. 주의 구간은 노란 마커로 확인할 수 있어요.
             </Alert>
 
             <Box
               component="section"
-              aria-label="이동 유형 선택"
+              aria-label="이동 상황 선택"
               sx={{
                 mb: 1.25,
                 p: 1.25,
-                borderRadius: '12px',
+                borderRadius: '8px',
                 bgcolor: '#fff',
                 border: '1px solid #D1FAE5',
               }}
             >
               <Typography sx={{ color: '#064E3B', fontSize: '1rem', fontWeight: 900, mb: 1 }}>
-                내 이동 유형
+                내 이동 상황
               </Typography>
               <Box
                 role="radiogroup"
-                aria-label="이동 유형"
+                aria-label="이동 상황"
                 sx={{
                   display: 'flex',
                   gap: 0.75,
@@ -679,7 +679,7 @@ export default function MapPage() {
                 severity="success"
                 sx={{
                   mt: 1,
-                  borderRadius: '10px',
+                  borderRadius: '8px',
                   bgcolor: '#ECFDF5',
                   color: '#065F46',
                   '& .MuiAlert-icon': { color: '#047857' },
@@ -695,7 +695,7 @@ export default function MapPage() {
               sx={{
                 mb: 1.25,
                 p: 1.25,
-                borderRadius: '12px',
+                borderRadius: '8px',
                 bgcolor: '#F8FAFC',
                 border: '1px solid #E5E7EB',
               }}
@@ -727,7 +727,7 @@ export default function MapPage() {
                   mt: 1,
                   minHeight: 48,
                   bgcolor: '#047857',
-                  borderRadius: '12px',
+                  borderRadius: '8px',
                   boxShadow: 'none',
                   textTransform: 'none',
                   fontSize: '0.9375rem',
@@ -742,7 +742,7 @@ export default function MapPage() {
                   severity="success"
                   sx={{
                     mt: 1,
-                    borderRadius: '10px',
+                    borderRadius: '8px',
                     bgcolor: '#ECFDF5',
                     color: '#065F46',
                     '& .MuiAlert-icon': { color: '#047857' },
@@ -755,17 +755,17 @@ export default function MapPage() {
 
             <Box
               component="section"
-              aria-label="이번 경로 분석에 사용한 공공데이터"
+              aria-label="이동 안내에 반영된 정보"
               sx={{
                 mb: 1.25,
                 p: 1.5,
-                borderRadius: '12px',
-                bgcolor: '#F8FAFC',
+                borderRadius: '8px',
+                bgcolor: '#FBFEFC',
                 border: '1px solid #BFDBFE',
               }}
             >
               <Typography sx={{ color: '#172554', fontSize: '1rem', fontWeight: 900, mb: 1 }}>
-                이번 경로 분석에 사용한 공공데이터
+                이동 안내에 반영된 정보
               </Typography>
               <Box sx={{ display: 'grid', gap: 0.75, mb: 1.25 }}>
                 {publicDataSources.map((source) => (
@@ -786,7 +786,7 @@ export default function MapPage() {
                 ))}
               </Box>
               <Typography sx={{ color: '#374151', fontSize: '0.9375rem', fontWeight: 700 }}>
-                공공데이터는 학교까지 오는 길과 대학가 주변 접근성 분석에 활용되고, 캠퍼스 내부의 실제 단차·경사 정보는 학생 제보 데이터로 보완됩니다.
+                날씨, 정류장, 편의시설, 제보 정보를 함께 확인해 이동 위험을 줄입니다.
               </Typography>
             </Box>
 
@@ -798,14 +798,14 @@ export default function MapPage() {
               sx={{
                 minHeight: 48,
                 bgcolor: '#047857',
-                borderRadius: '12px',
+                borderRadius: '8px',
                 boxShadow: 'none',
                 textTransform: 'none',
                 fontSize: '0.9375rem',
                 '&:hover': { bgcolor: '#065F46' },
               }}
             >
-              안전 도움 요청하기
+              동행 요청하기
             </Button>
             <Button
               fullWidth
@@ -818,13 +818,13 @@ export default function MapPage() {
                 borderColor: '#1E3A8A',
                 color: '#1E3A8A',
                 bgcolor: '#fff',
-                borderRadius: '12px',
+                borderRadius: '8px',
                 textTransform: 'none',
                 fontSize: '0.9375rem',
                 '&:hover': { bgcolor: '#EEF2FF', borderColor: '#172554' },
               }}
             >
-              불편 제보하기
+              제보하기
             </Button>
           </CardContent>
         </Card>
@@ -843,14 +843,14 @@ export default function MapPage() {
             zIndex: 18,
             minHeight: 48,
             bgcolor: '#047857',
-            borderRadius: '12px',
-            boxShadow: '0 8px 20px rgba(15,23,42,0.14)',
+            borderRadius: '8px',
+            boxShadow: '0 10px 28px rgba(15,23,42,0.10)',
             textTransform: 'none',
             fontSize: '0.9375rem',
             '&:hover': { bgcolor: '#065F46' },
           }}
         >
-          불편 제보하기
+          제보하기
         </Button>
       )}
 
@@ -885,7 +885,7 @@ export default function MapPage() {
       {/* 하단 시트 (드래그/탭으로 펼침·접힘) */}
       <Card
         component="section"
-        aria-label={selected ? '선택한 시설 상세' : '주변 접근가능 시설 목록'}
+          aria-label={selected ? '선택한 시설 상세' : '주변 편의 시설 목록'}
         sx={{
           position: 'absolute',
           left: 0,
@@ -898,7 +898,7 @@ export default function MapPage() {
           borderBottomRightRadius: 0,
           overflow: 'hidden',
           zIndex: 15,
-          boxShadow: '0 -4px 16px rgba(0,0,0,0.1)',
+          boxShadow: '0 -8px 24px rgba(15,23,42,0.10)',
           display: 'flex',
           flexDirection: 'column',
           transition: dragHeight !== null ? 'none' : 'height 0.25s ease',
@@ -982,7 +982,7 @@ export default function MapPage() {
             ) : (
               <>
                 <Typography sx={{ fontSize: '0.9375rem', fontWeight: 700, color: '#111827' }}>
-                  주변 접근가능 시설
+                  주변 편의 시설
                 </Typography>
                 <Box
                   component="span"
@@ -1002,7 +1002,7 @@ export default function MapPage() {
                 <Box sx={{ flex: 1 }} />
                 <Chip
                   icon={<Accessibility size={12} color="#065F46" aria-hidden="true" />}
-                  label="모두 접근가능"
+                  label="이동 편의 확인"
                   size="small"
                   sx={{
                     bgcolor: '#D1FAE5',
@@ -1107,7 +1107,7 @@ export default function MapPage() {
                 component="h3"
                 sx={{ fontSize: '0.8125rem', fontWeight: 700, color: '#4B5563', mt: 1.5, mb: 0.875 }}
               >
-                접근 편의 시설
+                이동 편의 시설
               </Typography>
               <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 2 }}>
                 {selected.features.map((f) => (
@@ -1141,7 +1141,7 @@ export default function MapPage() {
                     textTransform: 'none',
                     fontSize: '0.9375rem',
                     fontWeight: 700,
-                    borderRadius: '12px',
+                    borderRadius: '8px',
                     boxShadow: 'none',
                     '&:hover': { bgcolor: '#172554' },
                   }}
@@ -1161,7 +1161,7 @@ export default function MapPage() {
                     textTransform: 'none',
                     fontSize: '0.9375rem',
                     fontWeight: 700,
-                    borderRadius: '12px',
+                    borderRadius: '8px',
                     '&:hover': { bgcolor: '#F9FAFB', borderColor: '#D1D5DB' },
                   }}
                 >
@@ -1180,7 +1180,7 @@ export default function MapPage() {
                     <ListItemButton
                       onClick={() => setSelected(loc)}
                       aria-label={`${categoryLabel(loc.category)}, ${loc.name}, ${loc.building}, 거리 ${loc.distance}, 상세 보기`}
-                      sx={{ borderRadius: '10px', px: 1, py: 1.25, minHeight: 64, gap: 1.25 }}
+                      sx={{ borderRadius: '8px', px: 1, py: 1.25, minHeight: 64, gap: 1.25 }}
                     >
                       <Box
                         aria-hidden="true"
@@ -1289,7 +1289,7 @@ export default function MapPage() {
             <List>
               {filteredBySearch.length === 0 ? (
                 <Box sx={{ p: 4, textAlign: 'center' }}>
-                  <Typography sx={{ color: '#4B5563' }}>검색 결과가 없습니다</Typography>
+                  <Typography sx={{ color: '#4B5563' }}>검색 결과가 없어요</Typography>
                 </Box>
               ) : (
                 filteredBySearch.map((loc) => {
@@ -1381,7 +1381,7 @@ export default function MapPage() {
                       alignItems: 'center',
                       justifyContent: 'flex-start',
                       gap: 1.5,
-                      borderRadius: '12px',
+                      borderRadius: '8px',
                       bgcolor: '#fff',
                       border: '1px solid #E5E7EB',
                       minHeight: 64,
@@ -1397,7 +1397,7 @@ export default function MapPage() {
                       sx={{
                         width: 40,
                         height: 40,
-                        borderRadius: '10px',
+                        borderRadius: '8px',
                         bgcolor: `${cat.color}20`,
                         display: 'flex',
                         alignItems: 'center',
@@ -1441,7 +1441,7 @@ function RouteCompareCard({
     <Box
       sx={{
         p: 1.5,
-        borderRadius: '12px',
+        borderRadius: '8px',
         bgcolor: option.bg,
         border: `2px solid ${option.border}`,
         minHeight: 172,
@@ -1496,7 +1496,7 @@ function RouteCompareCard({
 }
 
 function RiskPointMarker({ risk }: { risk: RouteRiskPoint }) {
-  const color = risk.level === '높음' ? '#DC2626' : '#F59E0B';
+  const color = risk.level === '높음' ? '#D97706' : '#F59E0B';
 
   return (
     <Box
@@ -1516,12 +1516,12 @@ function RiskPointMarker({ risk }: { risk: RouteRiskPoint }) {
           display: 'flex',
           alignItems: 'center',
           gap: 0.5,
-          bgcolor: '#fff',
+          bgcolor: '#FFFBEB',
           border: `2px solid ${color}`,
           borderRadius: '999px',
           px: 0.875,
           py: 0.5,
-          boxShadow: '0 4px 12px rgba(15,23,42,0.18)',
+          boxShadow: '0 4px 12px rgba(146,64,14,0.16)',
         }}
       >
         <AlertTriangle size={15} color={color} aria-hidden="true" />

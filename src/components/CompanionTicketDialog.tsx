@@ -24,7 +24,7 @@ interface CompanionTicketDialogProps {
 const defaultRoute: ScheduleRouteRequest = {
   source: 'schedule',
   courseId: 'demo-course',
-  courseName: 'AI 서비스 기획',
+  courseName: '서비스 기획',
   destinationNodeId: '3',
   destinationName: '공학관',
   roomName: '304호',
@@ -43,21 +43,21 @@ export default function CompanionTicketDialog({
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
       <DialogTitle sx={{ fontWeight: 800, pb: 1, fontSize: '1.25rem' }}>
-        안전 도움 요청 티켓
+        동행 도움 요청
       </DialogTitle>
       <DialogContent sx={{ pt: 1 }}>
         <Alert
           severity="info"
-          sx={{ borderRadius: '10px', mb: 2, bgcolor: '#EEF2FF', color: '#172554' }}
+          sx={{ borderRadius: '8px', mb: 2, bgcolor: '#EEF2FF', color: '#172554' }}
         >
-          안전 도움 요청 기능은 데모입니다. 실제 서비스에서는 학교 인증 도우미 또는 장애학생지원센터와 연결됩니다.
+          요청 내용이 정리되었습니다. 학교 인증 도우미 또는 학생지원센터와 연결될 때 이 내용이 전달됩니다.
         </Alert>
 
         <Box
           sx={{
             border: '1px solid #D1FAE5',
-            bgcolor: '#F8FFFB',
-            borderRadius: '12px',
+            bgcolor: '#FBFEFC',
+            borderRadius: '8px',
             p: 2,
           }}
         >
@@ -67,7 +67,7 @@ export default function CompanionTicketDialog({
               sx={{
                 width: 40,
                 height: 40,
-                borderRadius: '10px',
+                borderRadius: '8px',
                 bgcolor: '#D1FAE5',
                 display: 'flex',
                 alignItems: 'center',
@@ -105,7 +105,7 @@ export default function CompanionTicketDialog({
           <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mt: 1.25 }}>
             <Chip
               label={`긴급도 ${urgency}`}
-              sx={{ bgcolor: urgency === '높음' ? '#FEE2E2' : '#FEF3C7', fontWeight: 800 }}
+              sx={{ bgcolor: urgency === '높음' ? '#FFF7ED' : '#FEF3C7', color: '#92400E', fontWeight: 800 }}
             />
             <Chip
               label={route.difficultyLabel}
@@ -114,7 +114,7 @@ export default function CompanionTicketDialog({
           </Box>
         </Box>
 
-        <Alert severity="success" sx={{ borderRadius: '10px', mt: 2 }}>
+        <Alert severity="success" sx={{ borderRadius: '8px', mt: 2 }}>
           정확한 위치와 개인정보는 선택된 인증 도우미에게만 제한적으로 공개됩니다.
         </Alert>
       </DialogContent>
@@ -128,13 +128,13 @@ export default function CompanionTicketDialog({
           sx={{
             bgcolor: '#1E3A8A',
             minHeight: 48,
-            borderRadius: '10px',
+            borderRadius: '8px',
             boxShadow: 'none',
             textTransform: 'none',
             '&:hover': { bgcolor: '#172554' },
           }}
         >
-          안전 도움 요청 보내기
+          동행 도움 요청하기
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,5 +1,5 @@
 // ============================================================
-// 베프(BEFF) 사용자 앱 공통 타입 정의
+// ONDA 사용자 앱 공통 타입 정의
 // 백엔드 연결 시 이 타입에 맞춰 API 응답을 매핑합니다.
 // ============================================================
 
@@ -72,7 +72,7 @@ export interface RouteRiskPoint {
   y: number;
 }
 
-export type MatchStatus = '모집중' | '매칭대기' | '확정' | '진행중' | '종료';
+export type MatchStatus = '모집 중' | '대기 중' | '확정' | '진행 중' | '종료';
 export type MatchRole = '이용자' | '제공자';
 
 export interface Companion {

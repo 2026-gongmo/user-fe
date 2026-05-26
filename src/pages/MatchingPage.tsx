@@ -51,12 +51,12 @@ function CompanionCard({
   onApply: (item: Companion) => void;
 }) {
   const statusColor =
-    item.status === '확정' ? '#16A34A' : item.status === '매칭대기' ? '#F59E0B' : '#1E3A8A';
+    item.status === '확정' ? '#16A34A' : item.status === '대기 중' ? '#F59E0B' : '#1E3A8A';
   const roleColor = item.role === '이용자' ? '#1E3A8A' : '#16A34A';
 
   return (
-    <Card sx={{ borderRadius: '12px', boxShadow: 'none' }}>
-      <CardContent sx={{ p: 2.5 }}>
+    <Card sx={{ borderRadius: '8px', boxShadow: '0 1px 2px rgba(15,23,42,0.04)' }}>
+      <CardContent sx={{ p: 2.25 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Chip
@@ -114,7 +114,7 @@ function CompanionCard({
               <Chip
                 role="listitem"
                 icon={<ShieldCheck size={12} aria-hidden="true" />}
-                label="학교 공동 인증 활동"
+                label="학교 인증 활동"
                 size="small"
                 sx={{
                   bgcolor: '#EEF2FF',
@@ -187,7 +187,7 @@ function CompanionCard({
           ))}
         </Box>
 
-        {/* 비장애학생 인센티브 표시 */}
+        {/* 동행 활동 혜택 표시 */}
         {item.volunteerHours && item.role === '이용자' && (
           <Box
             sx={{
@@ -196,7 +196,7 @@ function CompanionCard({
               gap: 1,
               bgcolor: '#ECFDF5',
               border: '1px solid #A7F3D0',
-              borderRadius: '10px',
+              borderRadius: '8px',
               px: 1.5,
               py: 1,
               mb: 1.5,
@@ -235,14 +235,14 @@ function CompanionCard({
           startIcon={<HandHeart size={18} />}
           sx={{
             bgcolor: roleColor,
-            borderRadius: '10px',
+            borderRadius: '8px',
             textTransform: 'none',
             boxShadow: 'none',
             minHeight: 44,
             '&:hover': { bgcolor: roleColor, opacity: 0.9 },
           }}
         >
-          {item.role === '이용자' ? '동행 제공하기' : '동행 요청하기'}
+          {item.role === '이용자' ? '동행 도와주기' : '동행 요청하기'}
         </Button>
       </CardContent>
     </Card>
@@ -262,7 +262,7 @@ export default function MatchingPage() {
           동행 매칭
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          서로 짝이 되어 의미있는 동행을 시작하세요
+          필요한 시간에 함께 이동할 사람을 찾아요
         </Typography>
       </Box>
 
@@ -270,7 +270,7 @@ export default function MatchingPage() {
         icon={<ShieldCheck size={20} />}
         severity="info"
         sx={{
-          borderRadius: '12px',
+          borderRadius: '8px',
           bgcolor: '#EEF2FF',
           color: '#172554',
           mb: 2,
@@ -286,7 +286,7 @@ export default function MatchingPage() {
           안전한 동행을 위한 가이드
         </Typography>
         <Typography variant="caption">
-          매칭 확정 시 서비스 이행 가이드라인에 동의하게 됩니다
+          서로 안심할 수 있도록 안전 약속을 함께 확인해요
         </Typography>
       </Alert>
 
@@ -301,7 +301,7 @@ export default function MatchingPage() {
           }}
           sx={{
             bgcolor: '#1E3A8A',
-            borderRadius: '12px',
+            borderRadius: '8px',
             textTransform: 'none',
             boxShadow: 'none',
             py: 1.25,
@@ -320,7 +320,7 @@ export default function MatchingPage() {
           }}
           sx={{
             bgcolor: '#16A34A',
-            borderRadius: '12px',
+            borderRadius: '8px',
             textTransform: 'none',
             boxShadow: 'none',
             py: 1.25,
@@ -350,7 +350,7 @@ export default function MatchingPage() {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
             <Sparkles size={16} color="#1E3A8A" />
             <Typography variant="body2" color="text.secondary">
-              현재 모집중인 동행 요청 {requests.length}건
+              현재 모집 중인 동행 요청 {requests.length}건
             </Typography>
           </Box>
           {requests.map((r) => (
@@ -364,7 +364,7 @@ export default function MatchingPage() {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
             <UserCheck size={16} color="#16A34A" />
             <Typography variant="body2" color="text.secondary">
-              동행을 제공해주실 분 {offers.length}명
+              동행을 도와줄 분 {offers.length}명
             </Typography>
           </Box>
           {offers.map((o) => (
@@ -376,12 +376,12 @@ export default function MatchingPage() {
       {selectedTab === 2 && (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {myMatches.length === 0 ? (
-            <Card sx={{ borderRadius: '12px', p: 4, textAlign: 'center' }}>
+            <Card sx={{ borderRadius: '8px', p: 4, textAlign: 'center' }}>
               <Typography color="text.secondary">아직 진행 중인 매칭이 없습니다</Typography>
             </Card>
           ) : (
             myMatches.map((m) => (
-              <Card key={m.id} sx={{ borderRadius: '12px' }}>
+              <Card key={m.id} sx={{ borderRadius: '8px' }}>
                 <CardContent sx={{ p: 2.5 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
                     <Avatar sx={{ bgcolor: '#16A34A15', color: '#16A34A' }}>
@@ -408,7 +408,7 @@ export default function MatchingPage() {
                   <Box
                     sx={{
                       bgcolor: '#F9FAFB',
-                      borderRadius: '10px',
+                      borderRadius: '8px',
                       p: 1.5,
                       mb: 2,
                       display: 'flex',
@@ -450,20 +450,20 @@ export default function MatchingPage() {
                       variant="outlined"
                       startIcon={<MessageCircle size={16} />}
                       sx={{
-                        borderRadius: '10px',
+                        borderRadius: '8px',
                         textTransform: 'none',
                         borderColor: '#E5E7EB',
                         color: '#374151',
                       }}
                     >
-                      오픈채팅
+                      채팅방
                     </Button>
                     <Button
                       fullWidth
                       variant="outlined"
                       startIcon={<Info size={16} />}
                       sx={{
-                        borderRadius: '10px',
+                        borderRadius: '8px',
                         textTransform: 'none',
                         borderColor: '#E5E7EB',
                         color: '#374151',
@@ -481,11 +481,11 @@ export default function MatchingPage() {
 
       <Dialog open={newOpen} onClose={() => setNewOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ fontWeight: 600 }}>
-          {formRole === '이용자' ? '동행 요청 등록' : '동행 제공 등록'}
+          {formRole === '이용자' ? '동행 요청 등록' : '동행 가능 등록'}
         </DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-          <Alert severity="info" sx={{ borderRadius: '10px' }}>
-            매칭 시 개인정보가 노출되지 않도록 정책이 마련되어 있습니다
+          <Alert severity="info" sx={{ borderRadius: '8px' }}>
+            연락처와 자세한 위치는 동행이 확정된 뒤 필요한 만큼만 보여요
           </Alert>
           <TextField
             select
@@ -494,13 +494,13 @@ export default function MatchingPage() {
             onChange={(e) => setFormRole(e.target.value as '이용자' | '제공자')}
             fullWidth
           >
-            <MenuItem value="이용자">이용자 (도움이 필요해요)</MenuItem>
-            <MenuItem value="제공자">제공자 (도움을 드릴게요)</MenuItem>
+            <MenuItem value="이용자">도움이 필요해요</MenuItem>
+            <MenuItem value="제공자">도움을 드릴 수 있어요</MenuItem>
           </TextField>
           <TextField label="제목" placeholder="예: 도서관 공부 동행" fullWidth />
           <TextField
             label="동행 목적/내용"
-            placeholder="어떤 동행을 원하시는지 적어주세요"
+            placeholder="필요한 동행 내용을 편하게 적어주세요"
             multiline
             rows={3}
             fullWidth
@@ -512,7 +512,7 @@ export default function MatchingPage() {
           </Box>
           <TextField
             label={formRole === '이용자' ? '필요한 도움' : '제공 가능한 도움'}
-            placeholder="쉼표로 구분 (예: 이동 보조, 책 운반)"
+            placeholder="예: 이동 보조, 책 운반"
             fullWidth
           />
         </DialogContent>
@@ -529,22 +529,21 @@ export default function MatchingPage() {
               boxShadow: 'none',
             }}
           >
-            등록하기
+            올리기
           </Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={!!applyTarget} onClose={() => setApplyTarget(null)} fullWidth maxWidth="xs">
         <DialogTitle sx={{ fontWeight: 600 }}>
-          {applyTarget?.role === '이용자' ? '동행 제공 신청' : '동행 요청 신청'}
+          {applyTarget?.role === '이용자' ? '동행 도와주기' : '동행 요청하기'}
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ mb: 2 }}>
-            "{applyTarget?.title}"에 신청하시겠습니까?
+            "{applyTarget?.title}"에 요청을 보낼까요?
           </Typography>
-          <Alert severity="warning" sx={{ borderRadius: '10px', fontSize: '0.8rem' }}>
-            신청 후 서로 서비스팀에서 조건에 따라 매칭을 진행합니다. 확정 시 오픈채팅방으로
-            연결됩니다.
+          <Alert severity="warning" sx={{ borderRadius: '8px', fontSize: '0.875rem' }}>
+            신청 후 조건이 맞으면 동행이 연결됩니다. 확정되면 채팅방에서 자세한 일정을 정할 수 있어요.
           </Alert>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
@@ -556,7 +555,7 @@ export default function MatchingPage() {
             onClick={() => setApplyTarget(null)}
             sx={{ bgcolor: '#1E3A8A', textTransform: 'none', boxShadow: 'none' }}
           >
-            신청하기
+            요청 보내기
           </Button>
         </DialogActions>
       </Dialog>
