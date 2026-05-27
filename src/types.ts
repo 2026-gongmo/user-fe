@@ -208,3 +208,45 @@ export interface Splat3DScene {
   capturedAt: string;
   pois: { id: string; label: string; note: string }[];
 }
+
+// ============================================================
+// 접근성 문제 제보
+// ============================================================
+
+export type ReportCategory =
+  | '계단'
+  | '단차'
+  | '급경사'
+  | '엘리베이터 고장'
+  | '엘리베이터 없음'
+  | '자동문 없음'
+  | '장애인 화장실 없음'
+  | '점자블록 손상'
+  | '공사 구간'
+  | '기타';
+
+export type FacilityStatus = 'yes' | 'no' | 'unknown';
+
+export interface FacilityChecklist {
+  autoDoor: FacilityStatus;
+  ramp: FacilityStatus;
+  elevator: FacilityStatus;
+  accessibleToilet: FacilityStatus;
+  tactilePaving: FacilityStatus;
+}
+
+export type ReportUrgency = 'low' | 'normal' | 'high';
+
+export interface AccessibilityReport {
+  id: string;
+  lat: number;
+  lon: number;
+  buildingName: string;
+  categories: ReportCategory[];
+  facilities: FacilityChecklist;
+  description: string;
+  photoName?: string;
+  urgency: ReportUrgency;
+  anonymous: boolean;
+  createdAt: string;
+}

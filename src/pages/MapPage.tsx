@@ -7,6 +7,7 @@ import {
   CircleMarker,
   Tooltip,
   useMap,
+  useMapEvents,
 } from 'react-leaflet';
 import L from 'leaflet';
 import {
@@ -26,6 +27,8 @@ import {
   MenuItem,
   Switch,
   FormControlLabel,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import {
   Search,
@@ -42,7 +45,11 @@ import {
   Camera,
   Eye,
   TriangleAlert,
+  Flag,
 } from 'lucide-react';
+
+import AccessibilityReportDialog from '../components/AccessibilityReportDialog';
+import type { AccessibilityReport } from '../types';
 
 import {
   landmarks,
@@ -107,6 +114,31 @@ function FitToCampus() {
   return null;
 }
 
+function LongPressListener({
+  onLongPress,
+}: {
+  onLongPress: (lat: number, lon: number) => void;
+}) {
+  useMapEvents({
+    contextmenu(e) {
+      e.originalEvent.preventDefault();
+      onLongPress(e.latlng.lat, e.latlng.lng);
+    },
+  });
+  return null;
+}
+
+function nearestLandmarkName(lat: number, lon: number, thresholdM = 80): string | null {
+  let best: { name: string; d: number } | null = null;
+  for (const l of landmarks) {
+    const dx = (l.lon - lon) * 88800;
+    const dy = (l.lat - lat) * 111000;
+    const d = Math.hypot(dx, dy);
+    if (!best || d < best.d) best = { name: l.name, d };
+  }
+  return best && best.d <= thresholdM ? best.name : null;
+}
+
 function FitBounds({ coords }: { coords: LatLon[] | null }) {
   const map = useMap();
   useEffect(() => {
@@ -143,6 +175,28 @@ export default function MapPage() {
     active: false,
     moved: false,
   });
+
+  // 접근성 제보
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportLat, setReportLat] = useState<number | null>(null);
+  const [reportLon, setReportLon] = useState<number | null>(null);
+  const [reportBuilding, setReportBuilding] = useState<string>('');
+  const [reports, setReports] = useState<AccessibilityReport[]>([]);
+  const [submitSnack, setSubmitSnack] = useState(false);
+  const [tipSnack, setTipSnack] = useState(true);
+
+  const openReportForLocation = (lat: number, lon: number, buildingName?: string) => {
+    setReportLat(lat);
+    setReportLon(lon);
+    setReportBuilding(buildingName ?? nearestLandmarkName(lat, lon) ?? '');
+    setReportOpen(true);
+  };
+
+  const handleReportSubmit = (r: AccessibilityReport) => {
+    setReports((prev) => [r, ...prev]);
+    setReportOpen(false);
+    setSubmitSnack(true);
+  };
 
   const selected = selectedName ? landmarkByName.get(selectedName) ?? null : null;
   const route = useMemo(() => getRoute(origin, destination, profile), [origin, destination, profile]);
@@ -331,6 +385,28 @@ export default function MapPage() {
               </Marker>
             );
           })}
+
+          <LongPressListener onLongPress={(lat, lon) => openReportForLocation(lat, lon)} />
+
+          {reports.map((r) => (
+            <CircleMarker
+              key={r.id}
+              center={[r.lat, r.lon]}
+              radius={9}
+              pathOptions={{
+                color: '#fff',
+                weight: 2,
+                fillColor:
+                  r.urgency === 'high' ? '#DC2626' : r.urgency === 'normal' ? '#F59E0B' : '#0EA5E9',
+                fillOpacity: 0.95,
+              }}
+            >
+              <Tooltip direction="top">
+                {r.buildingName} · {r.categories[0] ?? '제보'}
+                {r.categories.length > 1 ? ` 외 ${r.categories.length - 1}` : ''}
+              </Tooltip>
+            </CircleMarker>
+          ))}
 
           {route && <FitBounds coords={route.coords} />}
           {!route && <FitToCampus />}
@@ -743,6 +819,22 @@ export default function MapPage() {
                   도착으로
                 </Button>
               </Box>
+              <Button
+                fullWidth
+                variant="text"
+                startIcon={<Flag size={16} />}
+                onClick={() => openReportForLocation(selected.lat, selected.lon, selected.name)}
+                sx={{
+                  mt: 1,
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  color: '#B91C1C',
+                  borderRadius: 2,
+                  '&:hover': { bgcolor: '#FEE2E2' },
+                }}
+              >
+                이 시설 접근성 문제 제보
+              </Button>
             </>
           )}
 
@@ -833,6 +925,50 @@ export default function MapPage() {
           )}
         </List>
       </Drawer>
+
+      <AccessibilityReportDialog
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        onSubmit={handleReportSubmit}
+        initialLat={reportLat}
+        initialLon={reportLon}
+        initialBuildingName={reportBuilding}
+      />
+
+      <Snackbar
+        open={tipSnack}
+        autoHideDuration={5000}
+        onClose={() => setTipSnack(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ mt: 10, zIndex: 1200 }}
+      >
+        <Alert
+          icon={<Flag size={16} />}
+          severity="info"
+          variant="filled"
+          onClose={() => setTipSnack(false)}
+          sx={{ bgcolor: '#1E3A8A', fontSize: '0.8125rem', alignItems: 'center' }}
+        >
+          지도를 길게 눌러 접근성 문제를 제보할 수 있어요
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={submitSnack}
+        autoHideDuration={3500}
+        onClose={() => setSubmitSnack(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ mt: 10, zIndex: 1200 }}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          onClose={() => setSubmitSnack(false)}
+          sx={{ fontSize: '0.8125rem' }}
+        >
+          제보가 접수되었습니다. 검토 후 지도에 반영됩니다.
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
