@@ -19,7 +19,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  MenuItem,
   Alert,
 } from '@mui/material';
 import {
@@ -33,14 +32,13 @@ import {
   ChevronRight,
   Info,
   Sparkles,
-  UserCheck,
   BadgeCheck,
   Award,
   Star,
   GraduationCap,
 } from 'lucide-react';
 
-import { matchRequests as requests, matchOffers as offers, myMatches, matchSteps as steps } from '../data/mockData';
+import { matchRequests as requests, myMatches, matchSteps as steps } from '../data/mockData';
 import type { Companion } from '../types';
 
 function CompanionCard({
@@ -253,7 +251,6 @@ export default function MatchingPage() {
   const [selectedTab, setSelectedTab] = useState(0);
   const [newOpen, setNewOpen] = useState(false);
   const [applyTarget, setApplyTarget] = useState<Companion | null>(null);
-  const [formRole, setFormRole] = useState<'이용자' | '제공자'>('이용자');
 
   return (
     <Box sx={{ p: 2, pb: 4 }}>
@@ -290,15 +287,12 @@ export default function MatchingPage() {
         </Typography>
       </Alert>
 
-      <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+      <Box sx={{ mb: 2 }}>
         <Button
           fullWidth
           variant="contained"
           startIcon={<Plus size={18} />}
-          onClick={() => {
-            setFormRole('이용자');
-            setNewOpen(true);
-          }}
+          onClick={() => setNewOpen(true)}
           sx={{
             bgcolor: '#1E3A8A',
             borderRadius: '12px',
@@ -308,27 +302,13 @@ export default function MatchingPage() {
             '&:hover': { bgcolor: '#2542A3' },
           }}
         >
-          동행 요청
+          동행 요청 작성
         </Button>
-        <Button
-          fullWidth
-          variant="contained"
-          startIcon={<HandHeart size={18} />}
-          onClick={() => {
-            setFormRole('제공자');
-            setNewOpen(true);
-          }}
-          sx={{
-            bgcolor: '#16A34A',
-            borderRadius: '12px',
-            textTransform: 'none',
-            boxShadow: 'none',
-            py: 1.25,
-            '&:hover': { bgcolor: '#15803D' },
-          }}
+        <Typography
+          sx={{ mt: 0.875, fontSize: '0.75rem', color: '#6B7280', textAlign: 'center' }}
         >
-          동행 제공
-        </Button>
+          동행 제공은 아래 <b>동행 요청</b> 탭의 게시글을 골라 신청해요
+        </Typography>
       </Box>
 
       <Tabs
@@ -341,7 +321,6 @@ export default function MatchingPage() {
         }}
       >
         <Tab label="동행 요청" />
-        <Tab label="동행 제공" />
         <Tab label="내 매칭" />
       </Tabs>
 
@@ -350,7 +329,7 @@ export default function MatchingPage() {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
             <Sparkles size={16} color="#1E3A8A" />
             <Typography variant="body2" color="text.secondary">
-              현재 모집중인 동행 요청 {requests.length}건
+              지금 동행이 필요한 분 {requests.length}건
             </Typography>
           </Box>
           {requests.map((r) => (
@@ -360,20 +339,6 @@ export default function MatchingPage() {
       )}
 
       {selectedTab === 1 && (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-            <UserCheck size={16} color="#16A34A" />
-            <Typography variant="body2" color="text.secondary">
-              동행을 제공해주실 분 {offers.length}명
-            </Typography>
-          </Box>
-          {offers.map((o) => (
-            <CompanionCard key={o.id} item={o} onApply={setApplyTarget} />
-          ))}
-        </Box>
-      )}
-
-      {selectedTab === 2 && (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {myMatches.length === 0 ? (
             <Card sx={{ borderRadius: '12px', p: 4, textAlign: 'center' }}>
@@ -480,23 +445,11 @@ export default function MatchingPage() {
       )}
 
       <Dialog open={newOpen} onClose={() => setNewOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 600 }}>
-          {formRole === '이용자' ? '동행 요청 등록' : '동행 제공 등록'}
-        </DialogTitle>
+        <DialogTitle sx={{ fontWeight: 600 }}>동행 요청 작성</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
           <Alert severity="info" sx={{ borderRadius: '10px' }}>
             매칭 시 개인정보가 노출되지 않도록 정책이 마련되어 있습니다
           </Alert>
-          <TextField
-            select
-            label="구분"
-            value={formRole}
-            onChange={(e) => setFormRole(e.target.value as '이용자' | '제공자')}
-            fullWidth
-          >
-            <MenuItem value="이용자">이용자 (도움이 필요해요)</MenuItem>
-            <MenuItem value="제공자">제공자 (도움을 드릴게요)</MenuItem>
-          </TextField>
           <TextField label="제목" placeholder="예: 도서관 공부 동행" fullWidth />
           <TextField
             label="동행 목적/내용"
@@ -511,7 +464,7 @@ export default function MatchingPage() {
             <TextField label="시간" placeholder="14:00-18:00" fullWidth />
           </Box>
           <TextField
-            label={formRole === '이용자' ? '필요한 도움' : '제공 가능한 도움'}
+            label="필요한 도움"
             placeholder="쉼표로 구분 (예: 이동 보조, 책 운반)"
             fullWidth
           />
@@ -524,7 +477,7 @@ export default function MatchingPage() {
             variant="contained"
             onClick={() => setNewOpen(false)}
             sx={{
-              bgcolor: formRole === '이용자' ? '#1E3A8A' : '#16A34A',
+              bgcolor: '#1E3A8A',
               textTransform: 'none',
               boxShadow: 'none',
             }}

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { useState, type ReactNode } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Layout from './components/Layout';
@@ -10,6 +10,8 @@ import MatchingPage from './pages/MatchingPage';
 import ProfilePage from './pages/ProfilePage';
 import SupportPage from './pages/SupportPage';
 import Facility3DPage from './pages/Facility3DPage';
+import LoginPage from './pages/LoginPage';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const theme = createTheme({
   palette: {
@@ -86,26 +88,68 @@ const theme = createTheme({
   },
 });
 
-export default function App() {
+function RequireAuth({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const location = useLocation();
+  if (!user) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+  return <>{children}</>;
+}
+
+function RedirectIfAuth({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  if (user) return <Navigate to="/home" replace />;
+  return <>{children}</>;
+}
+
+function AppShell() {
   const [sosOpen, setSosOpen] = useState(false);
   const openSos = () => setSosOpen(true);
 
   return (
+    <>
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <RedirectIfAuth>
+              <LoginPage />
+            </RedirectIfAuth>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <RequireAuth>
+              <Layout onSosClick={openSos}>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/home" replace />} />
+                  <Route path="/home" element={<HomePage />} />
+                  <Route path="/map" element={<MapPage />} />
+                  <Route path="/matching" element={<MatchingPage />} />
+                  <Route path="/support" element={<SupportPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/facility/:id/3d" element={<Facility3DPage />} />
+                  <Route path="*" element={<Navigate to="/home" replace />} />
+                </Routes>
+              </Layout>
+            </RequireAuth>
+          }
+        />
+      </Routes>
+      <SosDialog open={sosOpen} onClose={() => setSosOpen(false)} />
+    </>
+  );
+}
+
+export default function App() {
+  return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Layout onSosClick={openSos}>
-        <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="/home"     element={<HomePage />} />
-          <Route path="/map"      element={<MapPage />} />
-          <Route path="/matching" element={<MatchingPage />} />
-          <Route path="/support"  element={<SupportPage />} />
-          <Route path="/profile"  element={<ProfilePage />} />
-          <Route path="/facility/:id/3d" element={<Facility3DPage />} />
-          <Route path="*"         element={<Navigate to="/home" replace />} />
-        </Routes>
-      </Layout>
-      <SosDialog open={sosOpen} onClose={() => setSosOpen(false)} />
+      <AuthProvider>
+        <AppShell />
+      </AuthProvider>
     </ThemeProvider>
   );
 }

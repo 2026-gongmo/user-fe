@@ -49,35 +49,59 @@ import {
   X,
   Settings,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
 import AccessibilityDialog from '../components/AccessibilityDialog';
+import { useAuth } from '../contexts/AuthContext';
 import {
-  currentUser as userProfile,
   volunteerStats,
   friends,
   certificates,
 } from '../data/mockData';
+import type { AccessNeedId, OfferSkillId } from '../types';
 
-// 아이콘 ref 가 들어가는 UI 카탈로그는 컴포넌트 내부 유지
-const accessNeeds = [
-  { id: 'mobility', icon: MoveVertical, label: '이동 보조', selected: true },
-  { id: 'vision', icon: Eye, label: '시각 안내', selected: false },
-  { id: 'hearing', icon: Ear, label: '청각/수어', selected: false },
-  { id: 'medical', icon: Stethoscope, label: '내부장애', selected: false },
+// 접근 프로파일 옵션 카탈로그
+const ACCESS_NEED_CATALOG: { id: AccessNeedId; icon: typeof MoveVertical; label: string }[] = [
+  { id: 'mobility', icon: MoveVertical, label: '이동 보조' },
+  { id: 'vision', icon: Eye, label: '시각 안내' },
+  { id: 'hearing', icon: Ear, label: '청각/수어' },
+  { id: 'medical', icon: Stethoscope, label: '내부장애' },
 ];
 
-const offerSkills = [
-  { id: 'sign', label: '수어 가능', selected: false },
-  { id: 'mobility-help', label: '휠체어 이동 보조', selected: true },
-  { id: 'note', label: '필기 도우미', selected: true },
-  { id: 'reading', label: '낭독·낭송', selected: false },
-  { id: 'tech', label: '전자기기 보조', selected: false },
+const OFFER_SKILL_CATALOG: { id: OfferSkillId; label: string }[] = [
+  { id: 'sign', label: '수어 가능' },
+  { id: 'mobility-help', label: '휠체어 이동 보조' },
+  { id: 'note', label: '필기 도우미' },
+  { id: 'reading', label: '낭독·낭송' },
+  { id: 'tech', label: '전자기기 보조' },
 ];
 
 export default function ProfilePage() {
+  const { user, logout, isHelper, isRequester } = useAuth();
+  const navigate = useNavigate();
   const [a11yOpen, setA11yOpen] = useState(false);
   const [profileEditOpen, setProfileEditOpen] = useState(false);
   const [certOpen, setCertOpen] = useState(false);
   const [friendsOpen, setFriendsOpen] = useState(false);
+
+  if (!user) return null;
+  const userProfile = user.profile;
+  const access = user.access;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
+
+  const accessNeeds = ACCESS_NEED_CATALOG.map((c) => ({
+    ...c,
+    selected: access.needs.includes(c.id),
+  }));
+
+  const offerSkills = OFFER_SKILL_CATALOG.map((c) => ({
+    ...c,
+    selected: access.offers.includes(c.id),
+  }));
 
   const progressPct = Math.min(
     100,
@@ -137,19 +161,21 @@ export default function ProfilePage() {
                   <Typography sx={{ fontSize: '1.125rem', fontWeight: 700 }}>
                     {userProfile.name}
                   </Typography>
-                  <Chip
-                    icon={<Star size={11} aria-hidden="true" />}
-                    label={userProfile.badge}
-                    size="small"
-                    sx={{
-                      height: 20,
-                      fontSize: '0.7rem',
-                      bgcolor: '#FEF3C7',
-                      color: '#B45309',
-                      fontWeight: 700,
-                      '& .MuiChip-icon': { color: '#B45309', ml: 0.5 },
-                    }}
-                  />
+                  {userProfile.badge && (
+                    <Chip
+                      icon={<Star size={11} aria-hidden="true" />}
+                      label={userProfile.badge}
+                      size="small"
+                      sx={{
+                        height: 20,
+                        fontSize: '0.7rem',
+                        bgcolor: '#FEF3C7',
+                        color: '#B45309',
+                        fontWeight: 700,
+                        '& .MuiChip-icon': { color: '#B45309', ml: 0.5 },
+                      }}
+                    />
+                  )}
                 </Box>
                 <Typography sx={{ fontSize: '0.8125rem', color: '#4B5563' }}>
                   {userProfile.university} · {userProfile.major}
@@ -230,7 +256,8 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* 봉사시간/활동확인서 카드 (비장애학생 인센티브) */}
+        {/* 봉사시간/활동확인서 카드 (도움 제공자 전용 인센티브) */}
+        {isHelper && (
         <Card
           component="section"
           aria-labelledby="volunteer-heading"
@@ -352,6 +379,59 @@ export default function ProfilePage() {
             </Box>
           </CardContent>
         </Card>
+        )}
+
+        {/* 받은 도움 카드 (장애 학생 전용 요약) */}
+        {isRequester && (
+          <Card
+            component="section"
+            aria-labelledby="received-help-heading"
+            sx={{ borderRadius: '12px', mt: 2, boxShadow: 'none' }}
+          >
+            <CardContent sx={{ p: 2.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1.25 }}>
+                <HeartHandshake size={20} color="#1E3A8A" aria-hidden="true" />
+                <Typography
+                  id="received-help-heading"
+                  component="h2"
+                  sx={{ fontWeight: 700, fontSize: '1rem', color: '#111827' }}
+                >
+                  이번 학기 함께한 동행
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: 1,
+                  mb: 1.25,
+                }}
+              >
+                <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '10px', py: 1.25 }}>
+                  <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#1E3A8A' }}>
+                    8
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.7rem', color: '#1E40AF' }}>완료 매칭</Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '10px', py: 1.25 }}>
+                  <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#1E3A8A' }}>
+                    5
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.7rem', color: '#1E40AF' }}>도와준 친구</Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center', bgcolor: '#F8FAFC', border: '1px solid #EEF1F4', borderRadius: '10px', py: 1.25 }}>
+                  <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#1E3A8A' }}>
+                    3
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.7rem', color: '#1E40AF' }}>제출한 제보</Typography>
+                </Box>
+              </Box>
+              <Typography sx={{ fontSize: '0.75rem', color: '#475569' }}>
+                매칭 기록과 매너 평가는 비공개로 보관돼요. 통계는 본인에게만 보입니다.
+              </Typography>
+            </CardContent>
+          </Card>
+        )}
 
         {/* 접근 프로파일 카드 */}
         <Card
@@ -380,54 +460,62 @@ export default function ProfilePage() {
               </Button>
             </Box>
 
-            <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', mb: 1 }}>
-              필요한 도움 (이용자 입력)
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mb: 2 }}>
-              {accessNeeds.map((n) => {
-                const Icon = n.icon;
-                return (
-                  <Chip
-                    key={n.id}
-                    icon={<Icon size={14} aria-hidden="true" />}
-                    label={n.label}
-                    size="small"
-                    sx={{
-                      bgcolor: n.selected ? '#EEF2FF' : '#F3F4F6',
-                      color: n.selected ? '#1E3A8A' : '#9CA3AF',
-                      fontWeight: n.selected ? 700 : 500,
-                      fontSize: '0.8125rem',
-                      height: 30,
-                      border: n.selected ? '1px solid #E0E7FF' : '1px solid transparent',
-                      '& .MuiChip-icon': { color: n.selected ? '#1E3A8A' : '#9CA3AF', ml: 0.5 },
-                    }}
-                  />
-                );
-              })}
-            </Box>
+            {isRequester && (
+              <>
+                <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', mb: 1 }}>
+                  필요한 도움
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
+                  {accessNeeds.map((n) => {
+                    const Icon = n.icon;
+                    return (
+                      <Chip
+                        key={n.id}
+                        icon={<Icon size={14} aria-hidden="true" />}
+                        label={n.label}
+                        size="small"
+                        sx={{
+                          bgcolor: n.selected ? '#EEF2FF' : '#F3F4F6',
+                          color: n.selected ? '#1E3A8A' : '#9CA3AF',
+                          fontWeight: n.selected ? 700 : 500,
+                          fontSize: '0.8125rem',
+                          height: 30,
+                          border: n.selected ? '1px solid #E0E7FF' : '1px solid transparent',
+                          '& .MuiChip-icon': { color: n.selected ? '#1E3A8A' : '#9CA3AF', ml: 0.5 },
+                        }}
+                      />
+                    );
+                  })}
+                </Box>
+              </>
+            )}
 
-            <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', mb: 1 }}>
-              제공 가능한 도움 (제공자 입력)
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
-              {offerSkills.map((s) => (
-                <Chip
-                  key={s.id}
-                  icon={<Hand size={14} aria-hidden="true" />}
-                  label={s.label}
-                  size="small"
-                  sx={{
-                    bgcolor: s.selected ? '#ECFDF5' : '#F3F4F6',
-                    color: s.selected ? '#15803D' : '#9CA3AF',
-                    fontWeight: s.selected ? 700 : 500,
-                    fontSize: '0.8125rem',
-                    height: 30,
-                    border: s.selected ? '1px solid #BBF7D0' : '1px solid transparent',
-                    '& .MuiChip-icon': { color: s.selected ? '#15803D' : '#9CA3AF', ml: 0.5 },
-                  }}
-                />
-              ))}
-            </Box>
+            {isHelper && (
+              <>
+                <Typography sx={{ fontSize: '0.75rem', color: '#6B7280', mb: 1 }}>
+                  제공 가능한 도움
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
+                  {offerSkills.map((s) => (
+                    <Chip
+                      key={s.id}
+                      icon={<Hand size={14} aria-hidden="true" />}
+                      label={s.label}
+                      size="small"
+                      sx={{
+                        bgcolor: s.selected ? '#ECFDF5' : '#F3F4F6',
+                        color: s.selected ? '#15803D' : '#9CA3AF',
+                        fontWeight: s.selected ? 700 : 500,
+                        fontSize: '0.8125rem',
+                        height: 30,
+                        border: s.selected ? '1px solid #BBF7D0' : '1px solid transparent',
+                        '& .MuiChip-icon': { color: s.selected ? '#15803D' : '#9CA3AF', ml: 0.5 },
+                      }}
+                    />
+                  ))}
+                </Box>
+              </>
+            )}
 
             <Box
               sx={{
@@ -570,6 +658,7 @@ export default function ProfilePage() {
           variant="outlined"
           fullWidth
           startIcon={<LogOut size={18} aria-hidden="true" />}
+          onClick={handleLogout}
           sx={{
             mt: 2,
             borderRadius: '10px',
@@ -604,34 +693,38 @@ export default function ProfilePage() {
           <TextField label="이름" defaultValue={userProfile.name} fullWidth />
           <TextField label="학교/학과" defaultValue={`${userProfile.university} ${userProfile.major}`} fullWidth />
           <TextField label="자기소개" defaultValue={userProfile.bio} multiline rows={3} fullWidth />
-          <Box>
-            <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, mb: 1 }}>
-              필요한 도움 (이용자 모드 입력)
-            </Typography>
-            <FormGroup row>
-              {accessNeeds.map((n) => (
-                <FormControlLabel
-                  key={n.id}
-                  control={<Checkbox defaultChecked={n.selected} />}
-                  label={n.label}
-                />
-              ))}
-            </FormGroup>
-          </Box>
-          <Box>
-            <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, mb: 1 }}>
-              제공 가능한 도움 (제공자 모드 입력)
-            </Typography>
-            <FormGroup row>
-              {offerSkills.map((s) => (
-                <FormControlLabel
-                  key={s.id}
-                  control={<Checkbox defaultChecked={s.selected} />}
-                  label={s.label}
-                />
-              ))}
-            </FormGroup>
-          </Box>
+          {isRequester && (
+            <Box>
+              <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, mb: 1 }}>
+                필요한 도움
+              </Typography>
+              <FormGroup row>
+                {accessNeeds.map((n) => (
+                  <FormControlLabel
+                    key={n.id}
+                    control={<Checkbox defaultChecked={n.selected} />}
+                    label={n.label}
+                  />
+                ))}
+              </FormGroup>
+            </Box>
+          )}
+          {isHelper && (
+            <Box>
+              <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, mb: 1 }}>
+                제공 가능한 도움
+              </Typography>
+              <FormGroup row>
+                {offerSkills.map((s) => (
+                  <FormControlLabel
+                    key={s.id}
+                    control={<Checkbox defaultChecked={s.selected} />}
+                    label={s.label}
+                  />
+                ))}
+              </FormGroup>
+            </Box>
+          )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={() => setProfileEditOpen(false)} sx={{ textTransform: 'none' }}>

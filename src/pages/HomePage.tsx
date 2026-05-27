@@ -36,6 +36,7 @@ import {
   Gem,
 } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
+import { useAuth } from '../contexts/AuthContext';
 import {
   heroBanners,
   matchCategories,
@@ -88,6 +89,7 @@ const activities = [
 ];
 
 export default function HomePage() {
+  const { user, isHelper } = useAuth();
   const heroScrollRef = useRef<HTMLDivElement | null>(null);
   const [heroIndex, setHeroIndex] = useState(0);
 
@@ -157,13 +159,13 @@ export default function HomePage() {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Box>
             <Typography sx={{ color: '#fff', fontSize: '0.875rem' }}>
-              안녕하세요, 홍길동님
+              안녕하세요, {user?.profile.name ?? '학생'}님
             </Typography>
             <Typography
               component="h1"
               sx={{ color: '#fff', fontWeight: 700, fontSize: '1.25rem', lineHeight: 1.3 }}
             >
-              오늘도 함께하는 캠퍼스
+              {isHelper ? '오늘도 함께하는 캠퍼스' : '편한 동선부터 함께 걸어요'}
             </Typography>
           </Box>
           <IconButton
