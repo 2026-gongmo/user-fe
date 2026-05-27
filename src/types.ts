@@ -160,3 +160,51 @@ export interface ExternalActivity {
   category: string;
   benefit: string;
 }
+
+// ============================================================
+// AI 행정지원
+// ============================================================
+
+export type SupportRequestType =
+  | '시험시간연장'
+  | '강의자료사전제공'
+  | '학습보조기기대여'
+  | '속기지원'
+  | '이동지원'
+  | '기타';
+
+export type SupportRequestStatus = '접수' | '검토중' | '교수회신대기' | '승인' | '반려' | '완료';
+
+export interface SupportRequest {
+  id: string;
+  type: SupportRequestType;
+  course?: string;
+  professor?: string;
+  reason: string;
+  createdAt: string;
+  status: SupportRequestStatus;
+  centerNote?: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'ai';
+  text: string;
+  suggestions?: { label: string; type: SupportRequestType }[];
+  at: string;
+}
+
+// ============================================================
+// Gaussian Splatting 3D 씬
+// ============================================================
+
+export interface Splat3DScene {
+  id: string;
+  facilityId: number;
+  title: string;
+  description: string;
+  thumbnail: string;
+  fileSizeMB: number;
+  capturedAt: string;
+  pois: { id: string; label: string; note: string }[];
+}

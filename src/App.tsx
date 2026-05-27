@@ -8,6 +8,8 @@ import HomePage from './pages/HomePage';
 import MapPage from './pages/MapPage';
 import MatchingPage from './pages/MatchingPage';
 import ProfilePage from './pages/ProfilePage';
+import SupportPage from './pages/SupportPage';
+import Facility3DPage from './pages/Facility3DPage';
 
 const theme = createTheme({
   palette: {
@@ -97,7 +99,9 @@ export default function App() {
           <Route path="/home"     element={<HomePage />} />
           <Route path="/map"      element={<MapPage />} />
           <Route path="/matching" element={<MatchingPage />} />
+          <Route path="/support"  element={<SupportPage />} />
           <Route path="/profile"  element={<ProfilePage />} />
+          <Route path="/facility/:id/3d" element={<Facility3DPage />} />
           <Route path="*"         element={<Navigate to="/home" replace />} />
         </Routes>
       </Layout>

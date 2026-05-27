@@ -61,7 +61,7 @@ const activities = [
   },
   {
     id: 2,
-    org: '서로플랫폼',
+    org: '캠퍼스 동행 네트워크',
     title: '동행 체험단 모집 (5월 정기)',
     deadline: 'D-7',
     deadlineLabel: '곧 마감',

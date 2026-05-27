@@ -262,7 +262,7 @@ export default function MatchingPage() {
           동행 매칭
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          서로 짝이 되어 의미있는 동행을 시작하세요
+          함께 짝이 되어 의미있는 동행을 시작하세요
         </Typography>
       </Box>
 
@@ -543,7 +543,7 @@ export default function MatchingPage() {
             "{applyTarget?.title}"에 신청하시겠습니까?
           </Typography>
           <Alert severity="warning" sx={{ borderRadius: '10px', fontSize: '0.8rem' }}>
-            신청 후 서로 서비스팀에서 조건에 따라 매칭을 진행합니다. 확정 시 오픈채팅방으로
+            신청 후 베프 운영팀에서 조건에 따라 매칭을 진행합니다. 확정 시 오픈채팅방으로
             연결됩니다.
           </Alert>
         </DialogContent>

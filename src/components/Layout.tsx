@@ -1,12 +1,13 @@
 import { ReactNode } from 'react';
 import { BottomNavigation, BottomNavigationAction, Paper, Fab, Box } from '@mui/material';
-import { Home, Map, Users, User, ShieldAlert } from 'lucide-react';
+import { Home, Map, Users, User, ShieldAlert, Sparkles } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const tabs = [
   { value: '/home',     label: '홈',     icon: Home },
   { value: '/map',      label: '지도',   icon: Map  },
   { value: '/matching', label: '매칭',   icon: Users },
+  { value: '/support',  label: '지원',   icon: Sparkles },
   { value: '/profile',  label: '프로필', icon: User },
 ];
 

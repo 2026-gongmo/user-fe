@@ -19,6 +19,9 @@ import type {
   MatchCategory,
   CampusNews,
   ExternalActivity,
+  SupportRequest,
+  ChatMessage,
+  Splat3DScene,
 } from '../types';
 
 // ============================================================
@@ -28,9 +31,9 @@ import type {
 export const currentUser: UserProfile = {
   id: 'u-1042',
   name: '홍길동',
-  university: '서로대학교',
+  university: '한빛대학교',
   major: '컴퓨터공학과 3학년',
-  email: 'gildong@seoro.ac.kr',
+  email: 'gildong@hanbit.ac.kr',
   emailVerified: true,
   bio: '함께 성장하는 대학생활을 만들어가요!',
   badge: '활동왕',
@@ -60,7 +63,7 @@ export const volunteerStats: VolunteerStats = {
 };
 
 export const certificates: Certificate[] = [
-  { id: 1, title: '2026-1학기 동행 활동 확인서', issuer: '서로대 장애학생지원센터 · 베프', date: '2026.06.30 발급예정' },
+  { id: 1, title: '2026-1학기 동행 활동 확인서', issuer: '한빛대 장애학생지원센터 · 베프', date: '2026.06.30 발급예정' },
   { id: 2, title: '배리어프리 서포터즈 활동 확인서', issuer: '학생복지위원회', date: '2026.04.15' },
   { id: 3, title: '봉사시간 누적 인증서 (30h+)', issuer: '베프', date: '2026.03.20' },
 ];
@@ -168,7 +171,7 @@ export const heroBanners: HeroBanner[] = [
   {
     id: 1, badge: '함께해요',
     title: '장애·비장애 함께,\n캠퍼스 산책 동행',
-    subtitle: '서로 다른 우리가 만나 친구가 되는 시간',
+    subtitle: '각자 다른 우리가 만나 친구가 되는 시간',
     image: 'https://images.unsplash.com/photo-1570793005299-c091be91bbad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
     accent: '#1E3A8A',
     overlay: 'linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 100%)',
@@ -202,13 +205,13 @@ export const matchCategories: MatchCategory[] = [
 export const hotPosts: HotPost[] = [
   { id: 1, board: '자유게시판', title: '오늘 학식 진짜 맛있다 ㄷㄷ',          likes: 87,  comments: 24, views: 1203, isHot: true  },
   { id: 2, board: '정보게시판', title: '중앙도서관 엘리베이터 점검 안내 (5/22)', likes: 45,  comments: 12, views: 892,  isHot: true  },
-  { id: 3, board: '동행후기',   title: '서로 동행 매칭 후기 - 정말 따뜻한 경험이었어요', likes: 132, comments: 38, views: 2104, isHot: true  },
+  { id: 3, board: '동행후기',   title: '베프 동행 매칭 후기 - 정말 따뜻한 경험이었어요', likes: 132, comments: 38, views: 2104, isHot: true  },
   { id: 4, board: '질문게시판', title: '컴공 전공 들으시는 분들 시간표 공유 부탁드려요', likes: 18,  comments: 9,  views: 421,  isHot: false },
 ];
 
 export const deadlineActivities: ActivityCard[] = [
   { id: 1, org: '학생복지위원회', title: '배리어프리 캠퍼스 서포터즈 2기', deadline: 'D-3',  deadlineLabel: '마감임박', deadlineColor: '#B91C1C', category: '교내활동', accessibility: ['엘리베이터', '수어통역'], progress: 85 },
-  { id: 2, org: '서로플랫폼',     title: '동행 체험단 모집 (5월 정기)',  deadline: 'D-7',  deadlineLabel: '곧 마감', deadlineColor: '#B45309', category: '동행',     accessibility: ['이동 보조', '자막'],  progress: 62 },
+  { id: 2, org: '캠퍼스 동행 네트워크', title: '동행 체험단 모집 (5월 정기)', deadline: 'D-7',  deadlineLabel: '곧 마감', deadlineColor: '#B45309', category: '동행',     accessibility: ['이동 보조', '자막'],  progress: 62 },
   { id: 3, org: '교내 창업동아리', title: '포용적 디자인 해커톤',         deadline: 'D-14', deadlineLabel: '여유',    deadlineColor: '#047857', category: '공모전',   accessibility: ['자막', '온라인'],     progress: 35 },
 ];
 
@@ -225,3 +228,94 @@ export const externalActivities: ExternalActivity[] = [
 ];
 
 export const UNREAD_NOTIFICATIONS = 3;
+
+// ============================================================
+// AI 행정지원
+// ============================================================
+
+export const supportRequests: SupportRequest[] = [
+  {
+    id: 'SR-2026-0231',
+    type: '시험시간연장',
+    course: '전자기학(EE301)',
+    professor: '이상민 교수',
+    reason: '저시력 — 직전 학기에도 1.5배 연장 인정',
+    createdAt: '2026-05-18 08:42',
+    status: '교수회신대기',
+  },
+  {
+    id: 'SR-2026-0230',
+    type: '강의자료사전제공',
+    course: '데이터구조(CS201)',
+    professor: '최유진 교수',
+    reason: '청각장애 — 강의 24시간 전 PDF 사전 학습 필요',
+    createdAt: '2026-05-18 07:11',
+    status: '검토중',
+  },
+  {
+    id: 'SR-2026-0229',
+    type: '학습보조기기대여',
+    reason: '점자정보단말기 1학기 대여 신청',
+    createdAt: '2026-05-17 22:14',
+    status: '접수',
+  },
+  {
+    id: 'SR-2026-0227',
+    type: '이동지원',
+    reason: '제1공학관 ↔ 학생회관 셔틀 동행 지원',
+    createdAt: '2026-05-16 11:30',
+    status: '완료',
+    centerNote: '5월 셔틀 동행 매칭 완료',
+  },
+];
+
+export const initialChatMessages: ChatMessage[] = [
+  {
+    id: 'm-1',
+    role: 'ai',
+    at: '방금',
+    text:
+      '안녕하세요 홍길동님, 베프 AI 행정지원입니다.\n장애학생지원센터에서 신청 가능한 편의지원을 빠르게 안내드릴게요. 아래에서 필요한 항목을 선택하거나 자유롭게 질문해 주세요.',
+    suggestions: [
+      { label: '시험시간 연장', type: '시험시간연장' },
+      { label: '강의자료 사전 제공', type: '강의자료사전제공' },
+      { label: '학습보조기기 대여', type: '학습보조기기대여' },
+      { label: '속기 지원', type: '속기지원' },
+      { label: '이동 지원', type: '이동지원' },
+    ],
+  },
+];
+
+// ============================================================
+// Gaussian Splatting 3D 씬
+// ============================================================
+
+export const splatScenes: Splat3DScene[] = [
+  {
+    id: 'scn-1',
+    facilityId: 1,
+    title: '제1공학관 1층 로비',
+    description: '주출입문 ~ 엘리베이터까지 동선과 점자블록 위치를 3D로 미리 확인할 수 있습니다.',
+    thumbnail: '#EEF2FF',
+    fileSizeMB: 184,
+    capturedAt: '2026-05-12',
+    pois: [
+      { id: 'p1', label: '주출입문', note: '자동문, 폭 120cm' },
+      { id: 'p2', label: '엘리베이터 #1', note: '저층용, 음성 안내 지원' },
+      { id: 'p3', label: '장애인 화장실', note: '로비 우측 5m' },
+    ],
+  },
+  {
+    id: 'scn-2',
+    facilityId: 3,
+    title: '학생회관 정문 ~ 후문',
+    description: '경사로 진입부와 식당 입구를 사전에 확인할 수 있습니다.',
+    thumbnail: '#ECFDF5',
+    fileSizeMB: 312,
+    capturedAt: '2026-05-10',
+    pois: [
+      { id: 'p1', label: '정문 경사로', note: '경사도 8%' },
+      { id: 'p2', label: '식당 입구', note: '자동문' },
+    ],
+  },
+];
