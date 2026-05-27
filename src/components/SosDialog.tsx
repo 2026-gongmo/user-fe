@@ -25,6 +25,7 @@ import type { SosTargetId } from '../types';
 
 const LOCATION_LABEL = '중앙도서관 3층';
 const AUTO_TARGETS: SosTargetId[] = ['guardian', 'support'];
+const COUNTDOWN_SECONDS = 5;
 
 const targetIcon = {
   guardian: Users,
@@ -40,31 +41,47 @@ export default function SosDialog({
 }) {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+  const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
 
   useEffect(() => {
     if (!open) return;
 
     let cancelled = false;
-    setSending(true);
+    setCountdown(COUNTDOWN_SECONDS);
+    setSending(false);
     setSent(false);
 
-    Promise.all(
-      AUTO_TARGETS.map((targetId) =>
-        sendSosCall({
-          targetId,
-          messages: ['긴급 도움이 필요합니다'],
-          customMessage: '장애학생 위치정보 자동 공유',
-          location: LOCATION_LABEL,
-        }),
-      ),
-    ).finally(() => {
+    const intervalId = window.setInterval(() => {
+      setCountdown((prev) => Math.max(prev - 1, 0));
+    }, 1000);
+
+    const timeoutId = window.setTimeout(() => {
       if (cancelled) return;
-      setSending(false);
-      setSent(true);
-    });
+
+      window.clearInterval(intervalId);
+      setCountdown(0);
+      setSending(true);
+
+      Promise.all(
+        AUTO_TARGETS.map((targetId) =>
+          sendSosCall({
+            targetId,
+            messages: ['긴급 도움이 필요합니다.'],
+            customMessage: '장애학생 위치정보 자동 공유',
+            location: LOCATION_LABEL,
+          }),
+        ),
+      ).finally(() => {
+        if (cancelled) return;
+        setSending(false);
+        setSent(true);
+      });
+    }, COUNTDOWN_SECONDS * 1000);
 
     return () => {
       cancelled = true;
+      window.clearInterval(intervalId);
+      window.clearTimeout(timeoutId);
     };
   }, [open]);
 
@@ -73,10 +90,16 @@ export default function SosDialog({
     setTimeout(() => {
       setSending(false);
       setSent(false);
+      setCountdown(COUNTDOWN_SECONDS);
     }, 300);
   };
 
   const sharedTargets = sosTargets.filter((target) => AUTO_TARGETS.includes(target.id));
+  const title = sent
+    ? '긴급 도움 호출 완료'
+    : sending
+      ? '긴급 도움 호출 중'
+      : `${countdown}초 후 긴급 호출`;
 
   return (
     <Dialog
@@ -102,19 +125,21 @@ export default function SosDialog({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <ShieldAlert size={24} aria-hidden="true" />
             <Typography id="sos-title" component="h1" sx={{ fontSize: '1.25rem', fontWeight: 800 }}>
-              긴급 도움 호출
+              {title}
             </Typography>
           </Box>
           <IconButton
             onClick={handleClose}
-            aria-label="긴급 호출 화면 닫기"
+            aria-label={sent ? '긴급 호출 화면 닫기' : '긴급 호출 취소'}
             sx={{ color: '#fff', minWidth: 44, minHeight: 44 }}
           >
             <X size={22} aria-hidden="true" />
           </IconButton>
         </Box>
         <Typography sx={{ fontSize: '0.875rem', color: '#FECACA' }}>
-          보호자와 장애학생지원센터에 현재 위치를 바로 전송합니다
+          {sent
+            ? '보호자와 장애학생지원센터에 현재 위치를 전송했습니다.'
+            : '오발송을 막기 위해 5초 뒤 자동 전송합니다. 잘못 눌렀다면 닫기를 눌러 취소하세요.'}
         </Typography>
         <Box
           sx={{
@@ -139,13 +164,7 @@ export default function SosDialog({
       <DialogContent sx={{ p: 2 }}>
         <Alert
           severity={sent ? 'success' : 'warning'}
-          icon={
-            sent ? (
-              <Check size={20} aria-hidden="true" />
-            ) : (
-              <LoaderCircle size={20} aria-hidden="true" />
-            )
-          }
+          icon={sent ? <Check size={20} aria-hidden="true" /> : <LoaderCircle size={20} aria-hidden="true" />}
           sx={{
             borderRadius: '12px',
             bgcolor: sent ? '#ECFDF5' : '#FEF3C7',
@@ -155,12 +174,14 @@ export default function SosDialog({
           }}
         >
           <Typography variant="body2" sx={{ fontWeight: 800 }}>
-            {sending ? '위치정보 전송 중' : '위치정보 전송 완료'}
+            {sent ? '위치정보 전송 완료' : sending ? '위치정보 전송 중' : `${countdown}초 후 자동 전송`}
           </Typography>
           <Typography variant="caption">
-            {sending
-              ? '보호자와 장애학생지원센터에 알림을 보내고 있습니다.'
-              : '보호자와 장애학생지원센터에 위치정보가 전달되었습니다.'}
+            {sent
+              ? '보호자와 장애학생지원센터에 위치정보가 전달되었습니다.'
+              : sending
+                ? '보호자와 장애학생지원센터에 알림을 보내고 있습니다.'
+                : '이 화면을 닫으면 긴급 도움 호출이 취소됩니다.'}
           </Typography>
         </Alert>
 
@@ -204,7 +225,13 @@ export default function SosDialog({
                     </Typography>
                   </Box>
                   <Box
-                    aria-label={sent ? `${target.label} 전송 완료` : `${target.label} 전송 중`}
+                    aria-label={
+                      sent
+                        ? `${target.label} 전송 완료`
+                        : sending
+                          ? `${target.label} 전송 중`
+                          : `${target.label} 전송 대기`
+                    }
                     sx={{
                       width: 28,
                       height: 28,
@@ -217,8 +244,12 @@ export default function SosDialog({
                   >
                     {sent ? (
                       <Check size={16} color="#047857" aria-hidden="true" />
-                    ) : (
+                    ) : sending ? (
                       <LoaderCircle size={16} color="#B45309" aria-hidden="true" />
+                    ) : (
+                      <Typography component="span" sx={{ fontSize: '0.75rem', fontWeight: 800, color: '#92400E' }}>
+                        {countdown}
+                      </Typography>
                     )}
                   </Box>
                 </Box>
@@ -260,7 +291,7 @@ export default function SosDialog({
             fontWeight: 700,
           }}
         >
-          닫기
+          {sent ? '닫기' : '호출 취소'}
         </Button>
       </DialogContent>
     </Dialog>

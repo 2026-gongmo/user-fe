@@ -4,19 +4,20 @@ import { Home, Map, Users, User, ShieldAlert, Sparkles } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const tabs = [
-  { value: '/home',     label: '홈',     icon: Home },
-  { value: '/map',      label: '지도',   icon: Map  },
-  { value: '/matching', label: '매칭',   icon: Users },
-  { value: '/support',  label: '지원',   icon: Sparkles },
-  { value: '/profile',  label: '프로필', icon: User },
+  { value: '/home', label: '홈', icon: Home },
+  { value: '/map', label: '지도', icon: Map },
+  { value: '/matching', label: '매칭', icon: Users },
+  { value: '/support', label: '지원', icon: Sparkles },
+  { value: '/profile', label: '프로필', icon: User },
 ];
 
 interface LayoutProps {
   children: ReactNode;
   onSosClick: () => void;
+  showSos?: boolean;
 }
 
-export default function Layout({ children, onSosClick }: LayoutProps) {
+export default function Layout({ children, onSosClick, showSos = true }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const activeTab = tabs.find((t) => location.pathname.startsWith(t.value))?.value ?? '/home';
@@ -26,43 +27,44 @@ export default function Layout({ children, onSosClick }: LayoutProps) {
       <main className="flex-1 overflow-y-auto overscroll-contain relative">
         {children}
 
-        <Box
-          sx={{
-            position: 'sticky',
-            bottom: 16,
-            display: 'flex',
-            justifyContent: 'flex-end',
-            pr: 2,
-            pointerEvents: 'none',
-            zIndex: 50,
-            marginTop: '-72px',
-          }}
-        >
-          <Fab
-            onClick={onSosClick}
-            aria-label="긴급 도움 호출"
+        {showSos && (
+          <Box
             sx={{
-              bgcolor: '#B91C1C',
-              color: '#fff',
-              pointerEvents: 'auto',
-              width: 64,
-              height: 64,
-              boxShadow: '0 6px 16px rgba(185,28,28,0.45)',
-              '&:hover': { bgcolor: '#991B1B' },
+              position: 'fixed',
+              right: 16,
+              bottom: 'calc(64px + env(safe-area-inset-bottom) + 16px)',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              pointerEvents: 'none',
+              zIndex: (t) => t.zIndex.appBar + 1,
             }}
           >
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
-              <ShieldAlert size={22} aria-hidden="true" />
-              <Box
-                component="span"
-                sx={{ fontSize: '0.6875rem', fontWeight: 800, mt: 0.25 }}
-                aria-hidden="true"
-              >
-                SOS
+            <Fab
+              onClick={onSosClick}
+              aria-label="긴급 도움 호출"
+              sx={{
+                bgcolor: '#B91C1C',
+                color: '#fff',
+                pointerEvents: 'auto',
+                width: 64,
+                height: 64,
+                boxShadow: '0 6px 16px rgba(185,28,28,0.45)',
+                '&:hover': { bgcolor: '#991B1B' },
+              }}
+            >
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
+                <ShieldAlert size={22} aria-hidden="true" />
+                <Box
+                  component="span"
+                  sx={{ fontSize: '0.6875rem', fontWeight: 800, mt: 0.25 }}
+                  aria-hidden="true"
+                >
+                  SOS
+                </Box>
               </Box>
-            </Box>
-          </Fab>
-        </Box>
+            </Fab>
+          </Box>
+        )}
       </main>
 
       <Paper

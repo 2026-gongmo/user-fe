@@ -70,7 +70,7 @@ type LayerKey = 'tactile' | 'sound' | 'charger' | 'toilet' | 'cctv' | 'forbidden
 type MapMode = 'browse' | 'place' | 'route' | 'navigate';
 type SearchPurpose = 'browse' | 'origin' | 'destination';
 
-const WALK_SPEED_MPM = 67; // 평균 보행 약 4km/h ≒ 67m/min
+const WALK_SPEED_MPM = 67; // 평균 보행 속도 약 4km/h
 const etaMinutes = (m: number) => Math.max(1, Math.round(m / WALK_SPEED_MPM));
 
 interface Place {
@@ -80,7 +80,7 @@ interface Place {
   isCurrent?: boolean;
 }
 
-// 데모용 "내 위치" — 실제로는 브라우저 Geolocation으로 대체 가능
+// 데모용 현재 위치. 실제 서비스에서는 브라우저 Geolocation으로 대체.
 const CURRENT_LOCATION_PLACE: Place = {
   name: '내 위치 (정문 근처)',
   lat: 37.46568,
@@ -98,17 +98,22 @@ const LAYER_META: Record<
   toilet: { label: '화장실', icon: DoorOpen, color: '#16A34A', count: poi.amenities.toilets.length },
   cctv: { label: 'CCTV', icon: Camera, color: '#64748B', count: poi.cctv.length },
   forbidden: {
-    label: '계단·거부',
+    label: '계단·차단',
     icon: TriangleAlert,
     color: '#DC2626',
     count: forbiddenSegments.length,
   },
 };
 
-const SHEET_COLLAPSED = 120;
-const SHEET_MAX = 540;
+const SHEET_MAX = 720;
+const SHEET_CLOSE_THRESHOLD = 72;
+type SheetLevel = 'collapsed' | 'expanded' | 'full';
+
 const getExpandedPx = () =>
-  typeof window === 'undefined' ? 460 : Math.min(window.innerHeight * 0.62, SHEET_MAX);
+  typeof window === 'undefined' ? 460 : Math.min(window.innerHeight * 0.58, SHEET_MAX);
+
+const getFullPx = () =>
+  typeof window === 'undefined' ? 620 : Math.max(360, window.innerHeight - 96);
 
 const placeIcon = (kind: 'origin' | 'destination' | 'picked' | 'landmark', large = false) => {
   const color =
@@ -130,7 +135,7 @@ const placeIcon = (kind: 'origin' | 'destination' | 'picked' | 'landmark', large
       box-shadow:0 4px 10px rgba(0,0,0,0.35);
       display:flex;align-items:center;justify-content:center;
     "><div style="transform:rotate(45deg);color:#fff;font-weight:800;font-size:${large ? 14 : 12}px;">
-      ${kind === 'origin' ? '출' : kind === 'destination' ? '도' : '★'}
+      ${kind === 'origin' ? '출' : kind === 'destination' ? '도' : '선'}
     </div></div>`,
   });
 };
@@ -192,19 +197,19 @@ function routableName(p: Place): string {
 }
 
 export default function MapPage() {
-  // ── 모드/상태 ────────────────────────────────────────────
+  // 모드/상태
   const [mode, setMode] = useState<MapMode>('browse');
   const [pickedPlace, setPickedPlace] = useState<Place | null>(null);
   const [origin, setOrigin] = useState<Place | null>(null);
   const [destination, setDestination] = useState<Place | null>(null);
   const [profile, setProfile] = useState<RouteProfile>('wheelchair');
 
-  // ── 검색 Drawer ─────────────────────────────────────────
+  // 검색 Drawer
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchPurpose, setSearchPurpose] = useState<SearchPurpose>('browse');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // ── 레이어 토글 ─────────────────────────────────────────
+  // 레이어 토글
   const [layers, setLayers] = useState<Record<LayerKey, boolean>>({
     tactile: true,
     sound: false,
@@ -215,8 +220,8 @@ export default function MapPage() {
   });
   const [layersOpen, setLayersOpen] = useState(false);
 
-  // ── 시트 드래그 ─────────────────────────────────────────
-  const [sheetExpanded, setSheetExpanded] = useState(true);
+  // 시트 드래그
+  const [sheetLevel, setSheetLevel] = useState<SheetLevel>('collapsed');
   const [dragHeight, setDragHeight] = useState<number | null>(null);
   const dragRef = useRef<{ startY: number; startH: number; active: boolean; moved: boolean }>({
     startY: 0,
@@ -225,7 +230,7 @@ export default function MapPage() {
     moved: false,
   });
 
-  // ── 접근성 제보 ─────────────────────────────────────────
+  // 접근성 제보
   const [reportOpen, setReportOpen] = useState(false);
   const [reportLat, setReportLat] = useState<number | null>(null);
   const [reportLon, setReportLon] = useState<number | null>(null);
@@ -234,7 +239,7 @@ export default function MapPage() {
   const [submitSnack, setSubmitSnack] = useState(false);
   const [tipSnack, setTipSnack] = useState(true);
 
-  // ── 파생값 ─────────────────────────────────────────────
+  // 파생값
   const routeKey = origin && destination ? `${routableName(origin)}|${routableName(destination)}` : null;
   const route = useMemo(() => {
     if (!origin || !destination) return null;
@@ -246,10 +251,10 @@ export default function MapPage() {
   );
 
   useEffect(() => {
-    if (mode !== 'browse') setSheetExpanded(true);
+    if (mode !== 'browse') setSheetLevel('collapsed');
   }, [mode]);
 
-  // ── 핸들러 ─────────────────────────────────────────────
+  // 핸들러
   const openSearch = (purpose: SearchPurpose) => {
     setSearchPurpose(purpose);
     setSearchOpen(true);
@@ -322,9 +327,40 @@ export default function MapPage() {
     setSubmitSnack(true);
   };
 
-  // ── 시트 드래그 핸들러 ───────────────────────────────────
+  // 시트 드래그 핸들러
+  const closeSheet = () => {
+    if (mode === 'place') {
+      setPickedPlace(null);
+      setMode('browse');
+      return;
+    }
+    if (mode === 'route') {
+      resetRoute();
+      return;
+    }
+    if (mode === 'navigate') {
+      setMode('route');
+    }
+  };
+
+  const collapsedSheetHeight =
+    mode === 'route'
+      ? 252
+      : mode === 'navigate'
+        ? 128
+        : mode === 'place'
+          ? 280
+          : 120;
+
+  const currentSheetHeight =
+    sheetLevel === 'full'
+      ? getFullPx()
+      : sheetLevel === 'expanded'
+        ? getExpandedPx()
+        : collapsedSheetHeight;
+
   const onHandlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    const baseH = sheetExpanded ? getExpandedPx() : SHEET_COLLAPSED;
+    const baseH = currentSheetHeight;
     dragRef.current = { startY: e.clientY, startH: baseH, active: true, moved: false };
     setDragHeight(baseH);
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -333,32 +369,41 @@ export default function MapPage() {
     if (!dragRef.current.active) return;
     const dy = dragRef.current.startY - e.clientY;
     if (Math.abs(dy) > 4) dragRef.current.moved = true;
-    const maxH = getExpandedPx();
-    const newH = Math.max(SHEET_COLLAPSED, Math.min(maxH, dragRef.current.startH + dy));
+    const newH = Math.max(0, Math.min(getFullPx(), dragRef.current.startH + dy));
     setDragHeight(newH);
   };
   const onHandlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!dragRef.current.active) return;
-    const maxH = getExpandedPx();
-    const finalH = dragHeight ?? (sheetExpanded ? maxH : SHEET_COLLAPSED);
-    const mid = (SHEET_COLLAPSED + maxH) / 2;
-    if (dragRef.current.moved) setSheetExpanded(finalH >= mid);
-    else setSheetExpanded((v) => !v);
+    const expandedH = getExpandedPx();
+    const fullH = getFullPx();
+    const finalH = dragHeight ?? currentSheetHeight;
+    const wasMoved = dragRef.current.moved;
     dragRef.current.active = false;
     setDragHeight(null);
     try {
       e.currentTarget.releasePointerCapture(e.pointerId);
     } catch {}
+    if (wasMoved && finalH <= SHEET_CLOSE_THRESHOLD) {
+      closeSheet();
+      return;
+    }
+    if (!wasMoved) {
+      setSheetLevel((v) => (v === 'collapsed' ? 'expanded' : v === 'expanded' ? 'full' : 'collapsed'));
+      return;
+    }
+    const collapsedBoundary = (collapsedSheetHeight + expandedH) / 2;
+    const fullBoundary = (expandedH + fullH) / 2;
+    if (finalH < collapsedBoundary) {
+      setSheetLevel('collapsed');
+    } else if (finalH < fullBoundary) {
+      setSheetLevel('expanded');
+    } else {
+      setSheetLevel('full');
+    }
   };
-  const sheetHeightStyle =
-    mode === 'route'
-      ? '252px'
-      : mode === 'navigate'
-        ? '128px'
-        : mode === 'place'
-          ? '280px'
-          : `${SHEET_COLLAPSED}px`;
-  const sheetDraggable = false;
+  const sheetHeight = dragHeight ?? currentSheetHeight;
+  const sheetHeightStyle = `${sheetHeight}px`;
+  const sheetDraggable = true;
 
   // 검색 결과 필터
   const filteredLandmarks = landmarks.filter((l) =>
@@ -366,11 +411,13 @@ export default function MapPage() {
   );
 
   const searchTitle =
-    searchPurpose === 'origin' ? '출발지 검색'
-    : searchPurpose === 'destination' ? '도착지 검색'
-    : '캠퍼스 장소 검색';
+    searchPurpose === 'origin'
+      ? '출발지 검색'
+      : searchPurpose === 'destination'
+        ? '도착지 검색'
+        : '캠퍼스 장소 검색';
 
-  // ── 렌더링 ─────────────────────────────────────────────
+  // 렌더링
   return (
     <Box
       component="main"
@@ -400,7 +447,7 @@ export default function MapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {/* 거부 segment */}
+          {/* 제한 구간 */}
           {layers.forbidden &&
             forbiddenSegments.map((seg, i) => (
               <Polyline
@@ -410,7 +457,7 @@ export default function MapPage() {
               />
             ))}
 
-          {/* 라우트 */}
+          {/* 경로 */}
           {mode === 'route' && route && (
             <Polyline
               positions={route.coords as [number, number][]}
@@ -475,7 +522,7 @@ export default function MapPage() {
               </CircleMarker>
             ))}
 
-          {/* 랜드마크 — 출발/도착/선택된 것만 표시 (탭하면 표시됨) */}
+          {/* 랜드마크는 출발/도착/선택 상태일 때만 표시 */}
           {landmarks
             .filter(
               (l) =>
@@ -504,7 +551,7 @@ export default function MapPage() {
               );
             })}
 
-          {/* 현재 위치 (펄스) */}
+          {/* 현재 위치 */}
           <CircleMarker
             center={[CURRENT_LOCATION_PLACE.lat, CURRENT_LOCATION_PLACE.lon]}
             radius={8}
@@ -558,7 +605,7 @@ export default function MapPage() {
         </MapContainer>
       </Box>
 
-      {/* 상단: 검색 + 레이어 + (route 모드에서) 프로파일 칩 */}
+      {/* 상단: 검색, 레이어, 프로필 칩 */}
       <Box
         sx={{
           position: 'absolute',
@@ -614,7 +661,7 @@ export default function MapPage() {
         {mode === 'route' && (
           <Box
             role="group"
-            aria-label="접근성 프로파일 선택"
+            aria-label="접근성 프로필 선택"
             sx={{
               display: 'flex',
               gap: 0.75,
@@ -661,7 +708,7 @@ export default function MapPage() {
         sx={{
           position: 'absolute',
           right: 12,
-          bottom: mode === 'browse' ? 16 : `calc(${sheetHeightStyle} + 12px)`,
+          bottom: mode === 'browse' ? 96 : `calc(${sheetHeightStyle} + 12px)`,
           zIndex: 999,
           transition: dragHeight !== null ? 'none' : 'bottom 0.25s ease',
         }}
@@ -684,11 +731,11 @@ export default function MapPage() {
         </IconButton>
       </Box>
 
-      {/* 하단 시트 (browse 모드에서는 숨김) */}
+      {/* 하단 시트 */}
       {mode !== 'browse' && (
       <Card
         component="section"
-        aria-label="장소/라우트 패널"
+        aria-label="장소와 경로 패널"
         sx={{
           position: 'absolute',
           left: 0,
@@ -711,7 +758,7 @@ export default function MapPage() {
           <Box
             role="button"
             tabIndex={0}
-            aria-label={sheetExpanded ? '패널 접기' : '패널 펼치기'}
+            aria-label={sheetLevel === 'full' ? '패널 축소' : '패널 확장'}
             onPointerDown={onHandlePointerDown}
             onPointerMove={onHandlePointerMove}
             onPointerUp={onHandlePointerUp}
@@ -719,7 +766,7 @@ export default function MapPage() {
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                setSheetExpanded((v) => !v);
+                setSheetLevel((v) => (v === 'collapsed' ? 'expanded' : v === 'expanded' ? 'full' : 'collapsed'));
               }
             }}
             sx={{
@@ -996,9 +1043,7 @@ export default function MapPage() {
   );
 }
 
-// ────────────────────────────────────────────────────────────
 // 시트 내부 컴포넌트
-// ────────────────────────────────────────────────────────────
 
 function PlaceSheet({
   place,
@@ -1102,7 +1147,7 @@ function PlaceSheet({
           textAlign: 'center',
         }}
       >
-        출발지로 정하면 도착지 검색이 자동으로 열려요. 도착지만 정하면 내 위치에서 자동 경로를 안내해요.
+        출발지로 정하면 도착지 검색이 자동으로 열리고, 도착지만 정하면 내 위치에서 자동 경로를 안내해요.
       </Typography>
     </Box>
   );
@@ -1132,7 +1177,7 @@ function RouteSheet({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      {/* O–D + 스왑 + 닫기 */}
+      {/* 출발/도착 선택과 교체 */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0.5, minWidth: 0 }}>
           <ButtonBase
@@ -1173,7 +1218,7 @@ function RouteSheet({
           </ButtonBase>
         </Box>
         <IconButton
-          aria-label="출발/도착 바꾸기"
+          aria-label="출발지와 도착지 바꾸기"
           onClick={onSwap}
           sx={{
             alignSelf: 'center',
@@ -1286,11 +1331,11 @@ function NavigateSheet({
           </Typography>
         ) : (
           <Typography sx={{ fontSize: '0.9375rem', color: '#9CA3AF' }}>
-            이 프로필 경로 없음
+            현재 프로필로는 경로 없음
           </Typography>
         )}
         <Typography sx={{ fontSize: '0.75rem', color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          → {destination.name}
+          도착: {destination.name}
         </Typography>
       </Box>
       <Button
@@ -1311,4 +1356,3 @@ function NavigateSheet({
     </Box>
   );
 }
-

@@ -104,8 +104,12 @@ function RedirectIfAuth({ children }: { children: ReactNode }) {
 }
 
 function AppShell() {
+  const { isRequester } = useAuth();
   const [sosOpen, setSosOpen] = useState(false);
-  const openSos = () => setSosOpen(true);
+  const openSos = () => {
+    if (!isRequester) return;
+    setSosOpen(true);
+  };
 
   return (
     <>
@@ -122,7 +126,7 @@ function AppShell() {
           path="*"
           element={
             <RequireAuth>
-              <Layout onSosClick={openSos}>
+              <Layout onSosClick={openSos} showSos={isRequester}>
                 <Routes>
                   <Route path="/" element={<Navigate to="/home" replace />} />
                   <Route path="/home" element={<HomePage />} />
@@ -138,7 +142,7 @@ function AppShell() {
           }
         />
       </Routes>
-      <SosDialog open={sosOpen} onClose={() => setSosOpen(false)} />
+      <SosDialog open={isRequester && sosOpen} onClose={() => setSosOpen(false)} />
     </>
   );
 }

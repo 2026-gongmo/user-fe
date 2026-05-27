@@ -1,4 +1,4 @@
-// SNU 캠퍼스 라우팅용 데이터 어댑터.
+// SNU 캠퍼스 라우팅용 데이터 어댑터
 // 원본은 snu-accessible-routing/scripts/export_for_user_fe.py 에서 생성.
 
 import landmarksRaw from './snu_landmarks.json';
@@ -82,7 +82,7 @@ export const SNU_CENTER: LatLon = [37.461, 126.949];
 
 export const PROFILE_META: Record<RouteProfile, { label: string; color: string; sub: string }> = {
   normal: { label: '일반', color: '#111827', sub: '최단거리' },
-  wheelchair: { label: '휠체어', color: '#2563EB', sub: '계단 회피·충전기 근접' },
-  vision: { label: '시각장애', color: '#CA8A04', sub: '점자블록·음향 우선' },
-  elderly: { label: '노약자', color: '#16A34A', sub: '벤치·화장실 근접' },
+  wheelchair: { label: '휠체어', color: '#2563EB', sub: '계단 회피 · 충전기 근접' },
+  vision: { label: '시각장애', color: '#CA8A04', sub: '점자블록 · 음향신호 우선' },
+  elderly: { label: '고령자', color: '#16A34A', sub: '벤치 · 화장실 근접' },
 };
